@@ -178,7 +178,7 @@ $('#btn-start-stop').on('click',function() {
     watchID = navigator.geolocation.watchPosition(update, locationError, {
         enableHighAccuracy: true,
         timeout: Infinity,
-        maximumAge: Infinity //10000
+        maximumAge: 10000 //10000
     });
 
     function update(position) {
