@@ -125,13 +125,12 @@
 								setTimeout('Timeall()', 100);
 							}
 						}
-						function ResetMap()
-						{	
-							//timeuse = 0;
-							//timeinterval = 0;
-							//$('#timer').html(millisectotime(timeinterval));
-							totalDistanceString = 0;
-						}
+						 function clearWatch() {
+        						if (watchID != null) {
+            							navigator.geolocation.clearWatch(watchID);
+        					 		watchID = null;
+        						}
+    						}
 						
 	//----------map----------------				
 $('#btn-start-stop').on('click',function() {
@@ -173,11 +172,11 @@ $('#btn-start-stop').on('click',function() {
         alert("Geolocation is not supported by your browser");
         return;
     }
-
-    navigator.geolocation.watchPosition(update, locationError, {
+        
+    var watchID = navigator.geolocation.watchPosition(update, locationError, {
         enableHighAccuracy: true,
         timeout: Infinity,
-        maximumAge: 10000
+        maximumAge: Infinity
     });
 
     function update(position) {
@@ -366,7 +365,7 @@ $('#btn-start-stop').on('click',function() {
 									//$('#totalbest').html(millisectotime(thebest));
 									$('#mytime2').html(buildstring);
 									ResetTime();
-									ResetMap();
+									clearWatch();
 								}
 
 							});
