@@ -126,13 +126,13 @@
 								setTimeout('Timeall()', 100);
 							}
 						}
-						 /*function clearWatch() {
+						 function clearWatch() {
         						if (watchID != null) {
             							navigator.geolocation.clearWatch(watchID);
         					 		watchID = null;
         					 		Globals.totalDistance = 0;
         						}
-    						}*/
+    						}
 						
 	//----------map----------------				
 $('#btn-start-stop').on('click',function() {
@@ -304,7 +304,11 @@ $('#btn-start-stop').on('click',function() {
 									lap_array.length = 0;
 							});
 	
-	
+							$('#btn-reset').on('click',function(){
+								localStorage.removeItem('time_all');
+								timeall = 0;
+								$('#timeall').html("");
+							});
 
 							$('#btn-pause').on('click',function(){
 								if (btntoggles == 0)
@@ -367,7 +371,7 @@ $('#btn-start-stop').on('click',function() {
 									//$('#totalbest').html(millisectotime(thebest));
 									$('#mytime2').html(buildstring);
 									ResetTime();
-									// clearWatch();
+									clearWatch();
 								}
 
 							});
@@ -377,7 +381,7 @@ $('#btn-start-stop').on('click',function() {
 </script>
 					<div data-role="footer" data-position="fixed" class="nav-glyphish-example">
 						
-						<div data-role="navbar" class="nav-glyphish-example" data-grid="c">
+						<div id="navbar" data-role="navbar" class="nav-glyphish-example" data-grid="c">
 							<ul>
 								<li><a href="#running" id="brunning" >Running</a></li>
 								<li><a href="#route" id="broute">Route</a></li>
@@ -449,7 +453,7 @@ $('#btn-start-stop').on('click',function() {
 						
 						</center>
 					</div>
-						<!--<button type="button" id="btn-delall" class="btn-danger" style="width:100%;height:60px;margin:140% 0% 0% 0%">DELETE ALL DATA</button>-->
+						<button type="button" id="btn-delall" class="btn-danger" style="width:100%;height:60px;margin:140% 0% 0% 0%">DELETE ALL DATA</button>
 	
 					<div data-role="footer" data-position="fixed" class="nav-glyphish-example">
 						<div data-role="navbar" class="nav-glyphish-example" data-grid="c">
