@@ -19,7 +19,7 @@
 
 		<div data-role="page" id="running">
 					<div data-role="header">
-						<h1>Exercise Healthy</h1>
+						<h1>Exercise Healthy1</h1>
 					</div>
 					
 						<script type="text/javascript" charset="utf-8" src="cordova-2.5.0.js"></script>
@@ -59,7 +59,7 @@
 						var thebest = 0;
 						var lap_array = new Array();
 						var watchID =null;
-						var resetTracking = document.getElementById('resetTracking');
+						var resetTracking = document.getElementById('btn-start-stop');
 						var distanceElement = document.getElementById('distance');
 						var map1 = document.getElementById('map1');
 						var map2 = document.getElementById('map2');
@@ -76,6 +76,7 @@
 							latestDistance: 0,
 							cntUpdates: 0,
 						};
+						var btntoggle = 0;
 						
 						function millisectotime(mill)
 						{
@@ -135,13 +136,13 @@
 								setTimeout('Timeall()', 100);
 							}
 						}
-						 function clearWatch() {
+						 /*function clearWatch() {
         						if (watchID != null) {
             							navigator.geolocation.clearWatch(watchID);
         					 		watchID = null;
         					 		Globals.totalDistance = 0;
         						}
-    						}
+    						}*/
 						
 	//----------map----------------				
 $('#btn-start-stop').on('click',function() {
@@ -176,6 +177,17 @@ $('#btn-start-stop').on('click',function() {
         timeout: Infinity,
         maximumAge: 10000 //10000
     });
+
+	resetTracking.addEventListener('click', function () {
+        if (btntoggle = 1){
+            path = [];
+            Globals.cntUpdates = 0;
+            Globals.totalDistance = 0;
+            update(latestPosition)
+			btntoggle = 0;
+        }
+    });
+
 
     function update(position) {
         if (latestPosition &&
@@ -261,7 +273,7 @@ $('#btn-start-stop').on('click',function() {
 
 						$(document).ready(function() { // On page load completed do it function.
 							var status = 0;
-							var btntoggle = 0;
+							//var btntoggle = 0;
 							var btntoggles  =0;
 							
 							if(localStorage.getItem('timer_history') && localStorage.getItem('timer_current')){
@@ -348,10 +360,9 @@ $('#btn-start-stop').on('click',function() {
 									$('#btn-pause').html('Pause');
 									btntoggle = 0;
 									Timeall();
-									clearWatch();
+									//clearWatch();
 									timealluse = 1;
-									visibleMap = null;
-									hiddenMap = null;
+								
 			
 									lap_array.push(millisectotime(timeinterval));
 									
