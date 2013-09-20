@@ -59,24 +59,15 @@
 						var thebest = 0;
 						var lap_array = new Array();
 						var watchID =null;
-						var resetTracking = document.getElementById('btn-start-stop');
-						var distanceElement = document.getElementById('distance');
-						var map1 = document.getElementById('map1');
-						var map2 = document.getElementById('map2');
-
-						var path = [];
-						var latestPosition;
-
-						// setup two images that can fade from one to the other when new maps are loaded
-	
-						var visibleMap = map1;
-						var hiddenMap = map2;
+						var disstop = 0;
 						var Globals = {
 							totalDistance: 0,
 							latestDistance: 0,
+							latestTime: 0,
 							cntUpdates: 0,
+							startTime: Date.now(),
+							latestDistanceTime: 0
 						};
-						var btntoggle = 0;
 						
 						function millisectotime(mill)
 						{
@@ -143,9 +134,23 @@
         					 		Globals.totalDistance = 0;
         						}
     						}*/
+	
 						
 	//----------map----------------				
 $('#btn-start-stop').on('click',function() {
+    var resetTracking = document.getElementById('resetTracking');
+    var distanceElement = document.getElementById('distance');
+    var map1 = document.getElementById('map1');
+    var map2 = document.getElementById('map2');
+
+    var path = [];
+    var latestPosition;
+    var lastDistanceTimeTemp = 0;
+
+    // setup two images that can fade from one to the other when new maps are loaded
+	
+    var visibleMap = map1;
+    var hiddenMap = map2;
 
     map1.addEventListener('load', function () {
         map1.style.opacity = 1;
@@ -165,7 +170,7 @@ $('#btn-start-stop').on('click',function() {
         visibleMap = map2;
         hiddenMap = map1;
     });
-
+	
     // setup geolocation
     if (!navigator.geolocation) {
         alert("Geolocation is not supported by your browser");
@@ -177,21 +182,8 @@ $('#btn-start-stop').on('click',function() {
         timeout: Infinity,
         maximumAge: 10000 //10000
     });
-
-	resetTracking.addEventListener('click', function () {
-        if (btntoggle = 1){
-            path = [];
-            Globals.cntUpdates = 0;
-            Globals.totalDistance = 0;
-            update(latestPosition)
-			btntoggle = 0;
-        }
-		if (btntoggle = 0){
-			btntoggle = 1;
-        }
-    });
-
-
+	
+	
     function update(position) {
         if (latestPosition &&
             position.coords.latitude === latestPosition.coords.latitude &&
@@ -205,11 +197,12 @@ $('#btn-start-stop').on('click',function() {
         Globals.cntUpdates++;
 
         // calculate total distance
+			
         if (Globals.cntUpdates > 1) {
             Globals.latestDistance = distance(path[Globals.cntUpdates - 1], path[Globals.cntUpdates - 2]);
             Globals.totalDistance += Globals.latestDistance;
         }
-
+		
         var totalDistanceString;
         if (this.totalDistance > 1) {
             totalDistanceString = Math.round(Globals.totalDistance * 1000) / 1000 + " km";
@@ -218,7 +211,23 @@ $('#btn-start-stop').on('click',function() {
             totalDistanceString = Math.round(Globals.totalDistance * 1000) + " m";
         }
 
+		if(disstop == 1)
+							{	
+								Globals.latestTime = 0;
+								Globals.cntUpdates = 0;
+								Globals.latestDistanceTime = 0;
+								Globals.latestDistance = 0;
+								Globals.totalDistance = 0;
+								setTimeout('update(position)', 100);
+								distanceElement.innerHTML = " 0";
+							}
         distanceElement.innerHTML = " " + totalDistanceString;
+		
+		
+        // time
+        var t = Date.now() - Globals.startTime;
+        Globals.latestDistanceTime = t - lastDistanceTimeTemp;
+        lastDistanceTimeTemp = t;
 
         // find screen size (show biggest possible map for device)
         var screenSize = 300 + "x" + 300;
@@ -276,7 +285,7 @@ $('#btn-start-stop').on('click',function() {
 
 						$(document).ready(function() { // On page load completed do it function.
 							var status = 0;
-							//var btntoggle = 0;
+							var btntoggle = 0;
 							var btntoggles  =0;
 							
 							if(localStorage.getItem('timer_history') && localStorage.getItem('timer_current')){
@@ -347,7 +356,7 @@ $('#btn-start-stop').on('click',function() {
 									$('#btn-pause').addClass("btn-inverse");
 									$('#btn-pause').html('Pause');
 
-									timeuse = 1;			
+									timeuse = 1;
 									TimerOK();
 									btntoggle = 1;
 								
@@ -363,9 +372,8 @@ $('#btn-start-stop').on('click',function() {
 									$('#btn-pause').html('Pause');
 									btntoggle = 0;
 									Timeall();
-									//clearWatch();
 									timealluse = 1;
-								
+									disstop = 1;
 			
 									lap_array.push(millisectotime(timeinterval));
 									
@@ -379,7 +387,7 @@ $('#btn-start-stop').on('click',function() {
 									//$('#totalbest').html(millisectotime(thebest));
 									$('#mytime2').html(buildstring);
 									ResetTime();
-									
+									//clearWatch();
 								}
 
 							});
@@ -461,7 +469,7 @@ $('#btn-start-stop').on('click',function() {
 						
 						</center>
 					</div>
-						<button type="button" id="btn-delall" class="btn-danger" style="width:100%;height:60px;margin:140% 0% 0% 0%">DELETE ALL DATA</button>
+						<!--<button type="button" id="btn-delall" class="btn-danger" style="width:100%;height:60px;margin:140% 0% 0% 0%">DELETE ALL DATA</button>-->
 	
 					<div data-role="footer" data-position="fixed" class="nav-glyphish-example">
 						<div data-role="navbar" class="nav-glyphish-example" data-grid="c">
@@ -501,7 +509,7 @@ $('#btn-start-stop').on('click',function() {
 						<h1><center id="timeall"></h1>
 						
 						</center>
-						<button type="button" id="btn-reset" class="btn-danger" style="width:50%;height:60px;margin:140% 0% 0% 0%">Reset</button>
+						<!--<button type="button" id="btn-reset" class="btn-danger" style="width:50%;height:60px;margin:140% 0% 0% 0%">Reset</button>-->
 					<div data-role="footer" data-position="fixed" class="nav-glyphish-example">
 						<div data-role="navbar" class="nav-glyphish-example" data-grid="c">
 							<ul>
