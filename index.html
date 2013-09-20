@@ -19,7 +19,7 @@
 
 		<div data-role="page" id="running">
 					<div data-role="header">
-						<h1>Exercise Healthy</h1>
+						<h1>Exercise Healthy1</h1>
 					</div>
 					
 						<script type="text/javascript" charset="utf-8" src="cordova-2.5.0.js"></script>
@@ -178,7 +178,7 @@ $('#btn-start-stop').on('click',function() {
     watchID = navigator.geolocation.watchPosition(update, locationError, {
         enableHighAccuracy: true,
         timeout: Infinity,
-        maximumAge: 10000 //10000
+        maximumAge: 0 //10000
     });
 
     function update(position) {
