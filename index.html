@@ -24,8 +24,27 @@
 					
 						<script type="text/javascript" charset="utf-8" src="cordova-2.5.0.js"></script>
 						<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
-
-						<table border="0" cellspacing="0" cellpadding="0" align="CENTER" >
+						
+						<table border="1" cellspacing="0" cellpadding="0" align="CENTER"  >
+					
+							<tr>
+								<td colspan="2" width="330" height="350">
+								<br>
+									<img id="map1"/>
+									<img id="map2"/>
+								</td>
+							</tr>						
+							<tr id="tr">
+								<td width="25px" height="5px" align="CENTER">
+									Distance<h1 id="distance" style="font-size:20px;">0 m</h1>
+									
+								</td>
+								<td width="25px" height="5px" align="CENTER">
+									Time<h1 id="timer" style="font-size:20px;">00:00:00</h1>
+								</td>
+							</tr>	
+						</table>
+						<!--<table border="0" cellspacing="0" cellpadding="0" align="CENTER" >
 					
 							<tr>
 								<td colspan="0" width="330" height="350">
@@ -37,13 +56,13 @@
 							</tr>						
 							<tr>
 								<td width="100px" height="5px">
-									<!--Distance<h1 id="distance" style="font-size:20px;margin:5px 0px -30px 35px;">    0.0</h1>-->
+				
 									<div id="distance"></div>
 									
 									<center>Time<h1 id="timer" style="font-size:20px;margin:5px 0px -30px 40px;">00:00:00</h1>
 								</td>	
 							</tr>	
-						</table>
+						</table>-->
 						<br><br>						
 						<center>
 							<button type="button" id="btn-start-stop" class="btn btn-large btn-success" style="width:100%;height:50px;">Start</button>
