@@ -44,25 +44,6 @@
 								</td>
 							</tr>	
 						</table>
-						<!--<table border="0" cellspacing="0" cellpadding="0" align="CENTER" >
-					
-							<tr>
-								<td colspan="0" width="330" height="350">
-								<br>
-								<br>
-									<img id="map1" />
-									<img id="map2" />																	
-								</td>
-							</tr>						
-							<tr>
-								<td width="100px" height="5px">
-				
-									<div id="distance"></div>
-									
-									<center>Time<h1 id="timer" style="font-size:20px;margin:5px 0px -30px 40px;">00:00:00</h1>
-								</td>	
-							</tr>	
-						</table>-->
 						<br><br>						
 						<center>
 							<button type="button" id="btn-start-stop" class="btn btn-large btn-success" style="width:50%;height:50px;">Start</button>
@@ -144,8 +125,16 @@
 								setTimeout('Timeall()', 100);
 							}
 						}
+						function ResetMap()
+						{	
+							//timeuse = 0;
+							//timeinterval = 0;
+							//$('#timer').html(millisectotime(timeinterval));
+							totalDistanceString = 0;
+						}
 						
-						$('#btn-start-stop').on('click',function() {
+	//----------map----------------				
+$('#btn-start-stop').on('click',function() {
     var resetTracking = document.getElementById('resetTracking');
     var distanceElement = document.getElementById('distance');
     var map1 = document.getElementById('map1');
@@ -190,25 +179,6 @@
         timeout: Infinity,
         maximumAge: 10000
     });
-
-    // click reset to start tracking new route from current position
-    /*resetTracking.addEventListener('click', function () {
-        if (!latestPosition) {
-            alert('Location not yet obtained. This can take a while...');
-            return;
-        }
-
-        if (confirm('Reset recorded route?')) {
-            path = [];
-            Globals.cntUpdates = 0;
-            Globals.totalDistance = 0;
-            Globals.startTime = Date.now();
-            Globals.latestTime = 0;
-            Globals.latestDistanceTime = 0;
-
-            update(latestPosition)
-        }
-    });*/
 
     function update(position) {
         if (latestPosition &&
@@ -295,6 +265,7 @@
     }
 
 });
+						// ----------------------------------------------------
 
 						$(document).ready(function() { // On page load completed do it function.
 							var status = 0;
@@ -395,6 +366,7 @@
 									//$('#totalbest').html(millisectotime(thebest));
 									$('#mytime2').html(buildstring);
 									ResetTime();
+									ResetMap();
 								}
 
 							});
