@@ -46,17 +46,17 @@
 						</table>
 						<br><br>						
 						<center>
-							<button type="button" id="btn-start-stop" class="btn btn-large btn-success" style="width:50%;height:50px;">Start</button>
-							<button type="button" id="btn-pause" class="btn btn-large btn-inverse" style="width:50%;height:50px;">Pause</button>
+							<button type="button" id="btn-start-pause" class="btn btn-large btn-success" style="width:50%;height:50px;">Start</button>
+							<button type="button" id="btn-stop" class="btn btn-large btn-danger" style="width:50%;height:50px;">Stop</button>
 						</center>
 										
 						<script src="./js/bootstrap.js"></script>		
 						<script language="javascript">
 						var timeuse = 0;
 						var timealluse = 0;
-						var timeinterval = 0;
+						var timeinterval = 0
+						var end = 0;
 						var timeall = 0;
-						var thebest = 0;
 						var lap_array = new Array();
 						var path = [];
 						var src = "";
@@ -132,9 +132,8 @@
 				
 						
 	//----------map----------------				
-$('#btn-start-stop').on('click',function() {
-
-
+//$('#btn-start-pause').on('click',function() {
+	function Map(){
     var resetTracking = document.getElementById('resetTracking');
     var distanceElement = document.getElementById('distance');
     var map1 = document.getElementById('map1');
@@ -176,7 +175,7 @@ $('#btn-start-stop').on('click',function() {
         timeout: Infinity,
         maximumAge: 5000 //10000
     });
-
+	
     function update(position) {
         if (latestPosition &&
             position.coords.latitude === latestPosition.coords.latitude &&
@@ -256,8 +255,9 @@ $('#btn-start-stop').on('click',function() {
 
         return d;
     }
+	}
+//});
 
-});
 						// ----------------------------------------------------
 
 						$(document).ready(function() { // On page load completed do it function.
@@ -296,10 +296,22 @@ $('#btn-start-stop').on('click',function() {
 									lap_array.length = 0;
 							});
 	
-	
 
-							$('#btn-pause').on('click',function(){
-								if (btntoggles == 0)
+							$('#btn-start-pause').on('click',function(){
+								if (btntoggle == 0)
+								{
+									$('#btn-start-pause').removeClass("btn-success");
+									$('#btn-start-pause').addClass("btn-inverse");
+									$('#btn-start-pause').html('Pause');
+								
+									timeuse = 1;								
+									TimerOK();
+									Map();
+									btntoggle = 1;
+									
+								
+								}
+								else
 								{
 									$('#btn-pause').removeClass("btn-inverse");
 									$('#btn-pause').addClass("btn-success");
@@ -307,45 +319,15 @@ $('#btn-start-stop').on('click',function() {
 									timeuse = 0;
 									btntoggles =1;
 								}
-								else
-								{
-									$('#btn-pause').removeClass("btn-success");
-									$('#btn-pause').addClass("btn-inverse");
-									$('#btn-pause').html('Pause');
-									timeuse = 1;
-									TimerOK();
-									btntoggles =0;
-								}
-							});
-	
-							$('#btn-start-stop').on('click',function(){
-								if (btntoggle == 0)
-								{
-									$('#btn-start-stop').removeClass("btn-success");
-									$('#btn-start-stop').addClass("btn-danger");
-									$('#btn-start-stop').html('Stop');
-	
-									$('#btn-pause').removeClass("btn-primary");
-									$('#btn-pause').addClass("btn-inverse");
-									$('#btn-pause').html('Pause');
+							});	
 									
+							$('#btn-stop').on('click',function(){	
+
+									$('#btn-start-pause').removeClass("btn-inverse");
+									$('#btn-start-pause').addClass("btn-success");
+									$('#btn-start-pause').html('Start');
+									$('#distance').html('0 m');
 									
-									timeuse = 1;			
-									TimerOK();
-									btntoggle = 1;
-									
-								
-								}
-								else
-								{
-									$('#btn-start-stop').removeClass("btn-danger");
-									$('#btn-start-stop').addClass("btn-success");
-									$('#btn-start-stop').html('Start');
-			
-									$('#btn-pause').removeClass("btn-success");
-									$('#btn-pause').addClass("btn-inverse");
-									$('#btn-pause').html('Pause');distance
-									$('#distance').html('0 m')
 									btntoggle = 0;
 									Timeall();
 									timealluse = 1;
@@ -372,9 +354,10 @@ $('#btn-start-stop').on('click',function() {
 									visibleMap = null;
 									hiddenMap = null;
 									///////////////////////
-								}
-
-							});
+									
+								
+							});	
+							
 						});
 
 
