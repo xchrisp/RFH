@@ -58,6 +58,7 @@
 						var timeall = 0;
 						var thebest = 0;
 						var lap_array = new Array();
+						var watchID =null;
 						var Globals = {
 							totalDistance: 0,
 							latestDistance: 0,
@@ -129,6 +130,7 @@
         						if (watchID != null) {
             							navigator.geolocation.clearWatch(watchID);
         					 		watchID = null;
+        					 		Globals.totalDistance = 0;
         						}
     						}
 						
@@ -173,7 +175,7 @@ $('#btn-start-stop').on('click',function() {
         return;
     }
         
-    var watchID = navigator.geolocation.watchPosition(update, locationError, {
+    watchID = navigator.geolocation.watchPosition(update, locationError, {
         enableHighAccuracy: true,
         timeout: Infinity,
         maximumAge: Infinity
