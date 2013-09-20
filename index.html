@@ -63,8 +63,6 @@
 							totalDistance: 0,
 							latestDistance: 0,
 							cntUpdates: 0,
-							//startTime: Date.now(),
-							//latestDistanceTime: 0
 						};
 						
 						function millisectotime(mill)
@@ -142,7 +140,7 @@ $('#btn-start-stop').on('click',function() {
 
     var path = [];
     var latestPosition;
-    var lastDistanceTimeTemp = 0;
+    //var lastDistanceTimeTemp = 0;
 
     // setup two images that can fade from one to the other when new maps are loaded
 	
@@ -356,6 +354,7 @@ $('#btn-start-stop').on('click',function() {
 									$('#btn-pause').html('Pause');
 									btntoggle = 0;
 									Timeall();
+									clearWatch();
 									timealluse = 1;
 			
 									lap_array.push(millisectotime(timeinterval));
@@ -370,7 +369,7 @@ $('#btn-start-stop').on('click',function() {
 									//$('#totalbest').html(millisectotime(thebest));
 									$('#mytime2').html(buildstring);
 									ResetTime();
-									clearWatch();
+									
 								}
 
 							});
