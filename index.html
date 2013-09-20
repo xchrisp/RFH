@@ -126,13 +126,13 @@
 								setTimeout('Timeall()', 100);
 							}
 						}
-						 function clearWatch() {
+						 /*function clearWatch() {
         						if (watchID != null) {
             							navigator.geolocation.clearWatch(watchID);
         					 		watchID = null;
         					 		Globals.totalDistance = 0;
         						}
-    						}
+    						}*/
 						
 	//----------map----------------				
 $('#btn-start-stop').on('click',function() {
@@ -178,7 +178,7 @@ $('#btn-start-stop').on('click',function() {
     watchID = navigator.geolocation.watchPosition(update, locationError, {
         enableHighAccuracy: true,
         timeout: Infinity,
-        maximumAge: Infinity
+        maximumAge: Infinity //10000
     });
 
     function update(position) {
@@ -367,7 +367,7 @@ $('#btn-start-stop').on('click',function() {
 									//$('#totalbest').html(millisectotime(thebest));
 									$('#mytime2').html(buildstring);
 									ResetTime();
-									clearWatch();
+									// clearWatch();
 								}
 
 							});
