@@ -62,10 +62,9 @@
 						var Globals = {
 							totalDistance: 0,
 							latestDistance: 0,
-							latestTime: 0,
 							cntUpdates: 0,
-							startTime: Date.now(),
-							latestDistanceTime: 0
+							//startTime: Date.now(),
+							//latestDistanceTime: 0
 						};
 						
 						function millisectotime(mill)
@@ -210,9 +209,9 @@ $('#btn-start-stop').on('click',function() {
         distanceElement.innerHTML = " " + totalDistanceString;
 
         // time
-        var t = Date.now() - Globals.startTime;
+       /* var t = Date.now() - Globals.startTime;
         Globals.latestDistanceTime = t - lastDistanceTimeTemp;
-        lastDistanceTimeTemp = t;
+        lastDistanceTimeTemp = t;*/
 
         // find screen size (show biggest possible map for device)
         var screenSize = 300 + "x" + 300;
