@@ -140,7 +140,6 @@ $('#btn-start-stop').on('click',function() {
 
     var path = [];
     var latestPosition;
-    //var lastDistanceTimeTemp = 0;
 
     // setup two images that can fade from one to the other when new maps are loaded
 	
@@ -205,11 +204,6 @@ $('#btn-start-stop').on('click',function() {
         }
 
         distanceElement.innerHTML = " " + totalDistanceString;
-
-        // time
-       /* var t = Date.now() - Globals.startTime;
-        Globals.latestDistanceTime = t - lastDistanceTimeTemp;
-        lastDistanceTimeTemp = t;*/
 
         // find screen size (show biggest possible map for device)
         var screenSize = 300 + "x" + 300;
