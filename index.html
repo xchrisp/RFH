@@ -59,6 +59,18 @@
 						var thebest = 0;
 						var lap_array = new Array();
 						var watchID =null;
+						var resetTracking = document.getElementById('resetTracking');
+						var distanceElement = document.getElementById('distance');
+						var map1 = document.getElementById('map1');
+						var map2 = document.getElementById('map2');
+
+						var path = [];
+						var latestPosition;
+
+						// setup two images that can fade from one to the other when new maps are loaded
+	
+						var visibleMap = map1;
+						var hiddenMap = map2;
 						var Globals = {
 							totalDistance: 0,
 							latestDistance: 0,
@@ -133,18 +145,6 @@
 						
 	//----------map----------------				
 $('#btn-start-stop').on('click',function() {
-    var resetTracking = document.getElementById('resetTracking');
-    var distanceElement = document.getElementById('distance');
-    var map1 = document.getElementById('map1');
-    var map2 = document.getElementById('map2');
-
-    var path = [];
-    var latestPosition;
-
-    // setup two images that can fade from one to the other when new maps are loaded
-	
-    var visibleMap = map1;
-    var hiddenMap = map2;
 
     map1.addEventListener('load', function () {
         map1.style.opacity = 1;
@@ -350,6 +350,8 @@ $('#btn-start-stop').on('click',function() {
 									Timeall();
 									clearWatch();
 									timealluse = 1;
+									visibleMap = null;
+									hiddenMap = null;
 			
 									lap_array.push(millisectotime(timeinterval));
 									
