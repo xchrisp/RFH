@@ -148,11 +148,8 @@
 						$('#btn-start-stop').on('click',function() {
     var resetTracking = document.getElementById('resetTracking');
     var distanceElement = document.getElementById('distance');
-    var timeElement = document.getElementById('time');
-    var speedElement = document.getElementById('speed');
-    var averageElement = document.getElementById('average');
-    //var map1 = document.getElementById('map1');
-    //var map2 = document.getElementById('map2');
+    var map1 = document.getElementById('map1');
+    var map2 = document.getElementById('map2');
 
     var path = [];
     var latestPosition;
@@ -239,7 +236,7 @@
             totalDistanceString = Math.round(Globals.totalDistance * 1000) + " m";
         }
 
-        distanceElement.innerHTML = "Distance: " + totalDistanceString;
+        distanceElement.innerHTML = " " + totalDistanceString;
 
         // time
         var t = Date.now() - Globals.startTime;
