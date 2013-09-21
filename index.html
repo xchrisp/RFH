@@ -56,6 +56,7 @@
 						var timealluse = 0;
 						var timeinterval = 0;
 						var timeall = 0;
+						var end = 0;
 						var distance_log = 0;
 						var lap_array = new Array();
 						var dis_array = new Array();
@@ -135,7 +136,8 @@
 	//----------map----------------				
 //$('#btn-start-pause').on('click',function() {
 						function Map(){
-							var resetTracking = document.getElementById('resetTracking');
+							
+
 							var distanceElement = document.getElementById('distance');
 							var map1 = document.getElementById('map1');
 							var map2 = document.getElementById('map2');
@@ -187,14 +189,16 @@
 
 								latestPosition = position;
 								path.push(latestPosition.coords);
-
-								Globals.cntUpdates++;
-
+								
+								if(end == 0){
+									Globals.cntUpdates++;
+								}
 								// calculate total distance
 								if (Globals.cntUpdates > 1) {
 									Globals.latestDistance = distance(path[Globals.cntUpdates - 1], path[Globals.cntUpdates - 2]);
 									Globals.totalDistance += Globals.latestDistance;
 								}
+								
 
 							var totalDistanceString;
 								if (this.totalDistance > 1) {
@@ -207,8 +211,8 @@
 								}
 
 								distanceElement.innerHTML = " " + totalDistanceString;
-
-
+								dis_array.push(distance_log);
+								
 								// find screen size (show biggest possible map for device)
 							var screenSize = 300 + "x" + 300;
 
@@ -216,20 +220,22 @@
 								src = "http://maps.googleapis.com/maps/api/staticmap?size=" + screenSize + "&sensor=true&path=";
 
 								// add path to map
-								for (var i = 0; i < Globals.cntUpdates; i++) {
-									if (i !== 0) src += "|";
-									src += path[i].latitude + "," + path[i].longitude;
-								}
-
+								
+									for (var i = 0; i < Globals.cntUpdates; i++) {
+										if (i !== 0) src += "|";
+										src += path[i].latitude + "," + path[i].longitude;
+									}
+									
 								// put marker at start and end of route
 								src += "&markers=" + path[0].latitude + "," + path[0].longitude + "|" +
 									path[path.length - 1].latitude + "," + path[path.length - 1].longitude;
 
 								// key
 								src += "&key=AIzaSyBV0yKqrMLMHwfmqEbKVR0xj7qreibCc2M";
-
+								
 								// load map, when loaded it will fade in
 								hiddenMap.src = src;
+								
 							}
 
 							// handle geolocation errors
@@ -261,6 +267,7 @@
 							}
 							localStorage.setItem('distance_current',distance_log);
 							localStorage.setItem('distance_history',JSON.stringify(dis_array));
+							
 						}
 //});
 
@@ -306,6 +313,7 @@
 								$('#mytime').html("");
 								$('#mytime2').html("");
 									lap_array.length = 0;
+									dis_array.length = 0;
 							});
 	
 
@@ -320,6 +328,7 @@
 									TimerOK();
 									Map();
 									btntoggle = 1;
+									end = 0;
 									
 								
 								}
@@ -343,9 +352,9 @@
 									btntoggle = 0;
 									Timeall();
 									timealluse = 1;
-			
+									end =1;
 									lap_array.push(millisectotime(timeinterval));
-									dis_array.push(distance_log);
+									//dis_array.push(distance_log);
 									
 									
 									var buildstring = "";
@@ -357,7 +366,7 @@
 									
 									$('#mytime2').html(buildstring);
 									ResetTime();
-
+									
 									//////////////////////
 									path = [];
 									Globals.cntUpdates = 0;
@@ -366,6 +375,7 @@
 									src = null;
 									visibleMap = null;
 									hiddenMap = null;
+								
 									///////////////////////
 									
 								
