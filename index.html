@@ -139,15 +139,15 @@
 							
 
 							var distanceElement = document.getElementById('distance');
-							var map1 = document.getElementById('map1');
-							var map2 = document.getElementById('map2');
+							//var map1 = document.getElementById('map1');
+							//var map2 = document.getElementById('map2');
 
 							var latestPosition;
 							var lastDistanceTimeTemp = 0;
 
 							// setup two images that can fade from one to the other when new maps are loaded
 							
-						   
+						   /*
 								map1.addEventListener('load', function () {
 								map1.style.opacity = 1;
 								map1.style.transitionDelay = 0;
@@ -167,6 +167,7 @@
 								visibleMap = map2;
 								hiddenMap = map1;
 								});
+								*/
 
 							// setup geolocation
 								if (!navigator.geolocation) {
@@ -214,7 +215,7 @@
 								
 								
 								// find screen size (show biggest possible map for device)
-							var screenSize = 300 + "x" + 300;
+							/*var screenSize = 300 + "x" + 300;
 
 								// setup map
 								src = "http://maps.googleapis.com/maps/api/staticmap?size=" + screenSize + "&sensor=true&path=";
@@ -234,7 +235,7 @@
 								src += "&key=AIzaSyBV0yKqrMLMHwfmqEbKVR0xj7qreibCc2M";
 								
 								// load map, when loaded it will fade in
-								hiddenMap.src = src;
+								hiddenMap.src = src;*/
 								
 							}
 
