@@ -54,10 +54,11 @@
 						<script language="javascript">
 						var timeuse = 0;
 						var timealluse = 0;
-						var timeinterval = 0
-						var end = 0;
+						var timeinterval = 0;
 						var timeall = 0;
+						var distance_log = 0;
 						var lap_array = new Array();
+						var dis_array = new Array();
 						var path = [];
 						var src = "";
 						var visibleMap = map1;
@@ -133,129 +134,134 @@
 						
 	//----------map----------------				
 //$('#btn-start-pause').on('click',function() {
-	function Map(){
-    var resetTracking = document.getElementById('resetTracking');
-    var distanceElement = document.getElementById('distance');
-    var map1 = document.getElementById('map1');
-    var map2 = document.getElementById('map2');
+						function Map(){
+							var resetTracking = document.getElementById('resetTracking');
+							var distanceElement = document.getElementById('distance');
+							var map1 = document.getElementById('map1');
+							var map2 = document.getElementById('map2');
 
-    var latestPosition;
-    var lastDistanceTimeTemp = 0;
+							var latestPosition;
+							var lastDistanceTimeTemp = 0;
 
-    // setup two images that can fade from one to the other when new maps are loaded
-	
-   
-    map1.addEventListener('load', function () {
-        map1.style.opacity = 1;
-        map1.style.transitionDelay = 0;
-        map2.style.opacity = 0;
-        map2.style.transitionDelay = "0.3s";
+							// setup two images that can fade from one to the other when new maps are loaded
+							
+						   
+								map1.addEventListener('load', function () {
+								map1.style.opacity = 1;
+								map1.style.transitionDelay = 0;
+								map2.style.opacity = 0;
+								map2.style.transitionDelay = "0.3s";
 
-        visibleMap = map1;
-        hiddenMap = map2;
-    });
-    map2.addEventListener('load', function () {
-        map2.style.opacity = 1;
-        map2.style.transitionDelay = 0;
-        map1.style.opacity = 0;
-        map1.style.transitionDelay = "0.3s";
+								visibleMap = map1;
+								hiddenMap = map2;
+								});
+								
+								map2.addEventListener('load', function () {
+								map2.style.opacity = 1;
+								map2.style.transitionDelay = 0;
+								map1.style.opacity = 0;
+								map1.style.transitionDelay = "0.3s";
 
-        visibleMap = map2;
-        hiddenMap = map1;
-    });
+								visibleMap = map2;
+								hiddenMap = map1;
+								});
 
-    // setup geolocation
-    if (!navigator.geolocation) {
-        alert("Geolocation is not supported by your browser");
-        return;
-    }
-        
-		navigator.geolocation.watchPosition(update, locationError, {
-        enableHighAccuracy: true,
-        timeout: Infinity,
-        maximumAge: 5000 //10000
-    });
-	
-    function update(position) {
-        if (latestPosition &&
-            position.coords.latitude === latestPosition.coords.latitude &&
-            position.coords.longitude === latestPosition.coords.longitude) {
-            return;
-        }
+							// setup geolocation
+								if (!navigator.geolocation) {
+									alert("Geolocation is not supported by your browser");
+									return;
+								}
+									
+									navigator.geolocation.watchPosition(update, locationError, {
+									enableHighAccuracy: true,
+									timeout: Infinity,
+									maximumAge: 5000 //10000
+								});
+							
+							function update(position) {
+								if (latestPosition &&
+									position.coords.latitude === latestPosition.coords.latitude &&
+									position.coords.longitude === latestPosition.coords.longitude) {
+									return;
+								}
 
-        latestPosition = position;
-        path.push(latestPosition.coords);
+								latestPosition = position;
+								path.push(latestPosition.coords);
 
-        Globals.cntUpdates++;
+								Globals.cntUpdates++;
 
-        // calculate total distance
-        if (Globals.cntUpdates > 1) {
-            Globals.latestDistance = distance(path[Globals.cntUpdates - 1], path[Globals.cntUpdates - 2]);
-            Globals.totalDistance += Globals.latestDistance;
-        }
+								// calculate total distance
+								if (Globals.cntUpdates > 1) {
+									Globals.latestDistance = distance(path[Globals.cntUpdates - 1], path[Globals.cntUpdates - 2]);
+									Globals.totalDistance += Globals.latestDistance;
+								}
 
-        var totalDistanceString;
-        if (this.totalDistance > 1) {
-            totalDistanceString = Math.round(Globals.totalDistance * 1000) / 1000 + " km";
-        }
-        else {
-            totalDistanceString = Math.round(Globals.totalDistance * 1000) + " m";
-        }
+							var totalDistanceString;
+								if (this.totalDistance > 1) {
+									totalDistanceString = Math.round(Globals.totalDistance * 1000) / 1000 + " km";
+									distance_log = Math.round((Globals.totalDistance * 1000) / 1000);
+								}
+								else {
+									totalDistanceString = Math.round(Globals.totalDistance * 1000) + " m";
+									distance_log = Math.round(Globals.totalDistance * 1000);
+								}
 
-        distanceElement.innerHTML = " " + totalDistanceString;
+								distanceElement.innerHTML = " " + totalDistanceString;
 
 
-        // find screen size (show biggest possible map for device)
-        var screenSize = 300 + "x" + 300;
+								// find screen size (show biggest possible map for device)
+							var screenSize = 300 + "x" + 300;
 
-        // setup map
-        src = "http://maps.googleapis.com/maps/api/staticmap?size=" + screenSize + "&sensor=true&path=";
+								// setup map
+								src = "http://maps.googleapis.com/maps/api/staticmap?size=" + screenSize + "&sensor=true&path=";
 
-        // add path to map
-        for (var i = 0; i < Globals.cntUpdates; i++) {
-            if (i !== 0) src += "|";
-            src += path[i].latitude + "," + path[i].longitude;
-        }
+								// add path to map
+								for (var i = 0; i < Globals.cntUpdates; i++) {
+									if (i !== 0) src += "|";
+									src += path[i].latitude + "," + path[i].longitude;
+								}
 
-        // put marker at start and end of route
-        src += "&markers=" + path[0].latitude + "," + path[0].longitude + "|" +
-            path[path.length - 1].latitude + "," + path[path.length - 1].longitude;
+								// put marker at start and end of route
+								src += "&markers=" + path[0].latitude + "," + path[0].longitude + "|" +
+									path[path.length - 1].latitude + "," + path[path.length - 1].longitude;
 
-        // key
-        src += "&key=AIzaSyBV0yKqrMLMHwfmqEbKVR0xj7qreibCc2M";
+								// key
+								src += "&key=AIzaSyBV0yKqrMLMHwfmqEbKVR0xj7qreibCc2M";
 
-        // load map, when loaded it will fade in
-        hiddenMap.src = src;
-    }
+								// load map, when loaded it will fade in
+								hiddenMap.src = src;
+							}
 
-    // handle geolocation errors
-    function locationError() {
-        alert("Could not find your position. Did you allow the app to use geo location?");
-    }
+							// handle geolocation errors
+							function locationError() {
+								alert("Could not find your position. Did you allow the app to use geo location?");
+							}
 
-    // calculate distance between two positions
-    var R = 6371; // km
-    var toRad = Math.PI / 180;
+							// calculate distance between two positions
+							var R = 6371; // km
+							var toRad = Math.PI / 180;
 
-    function distance(pos1, pos2) {
-        var lat1 = pos1.latitude;
-        var lon1 = pos1.longitude;
-        var lat2 = pos2.latitude;
-        var lon2 = pos2.longitude;
+							function distance(pos1, pos2) {
+								var lat1 = pos1.latitude;
+								var lon1 = pos1.longitude;
+								var lat2 = pos2.latitude;
+								var lon2 = pos2.longitude;
 
-        var dLat = (lat2 - lat1) * toRad;
-        var dLon = (lon2 - lon1) * toRad;
-        lat1 = lat1 * toRad;
-        lat2 = lat2 * toRad;
+								var dLat = (lat2 - lat1) * toRad;
+								var dLon = (lon2 - lon1) * toRad;
+								lat1 = lat1 * toRad;
+								lat2 = lat2 * toRad;
 
-        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        var d = R * c;
+								var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+									Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+								var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+								var d = R * c;
 
-        return d;
-    }
-	}
+								return d;
+							}
+							localStorage.setItem('distance_current',distance_log);
+							localStorage.setItem('distance_history',JSON.stringify(dis_array));
+						}
 //});
 
 						// ----------------------------------------------------
@@ -270,6 +276,11 @@
 								timeinterval = parseInt(localStorage.getItem('timer_current'));
 							}
 							
+							if(localStorage.getItem('distance_history') && localStorage.getItem('distance_current')){
+								dis_array = JSON.parse(localStorage.getItem('distance_history'));
+								distance_log = parseInt(localStorage.getItem('distance_current'));
+							}
+							
 							if(localStorage.getItem('time_all'))
 							{
 									timeall = parseInt(localStorage.getItem('time_all'));
@@ -278,10 +289,11 @@
 
 								for(var i = 0; i < lap_array.length;i++)
 								{
-									buildstring =  '<h1 style="font-size:40px">' + (i+1) + ' - ' + lap_array[i] + '</h1>' + buildstring ;			
+									buildstring =  '<h1 style="font-size:40px">' + (i+1) + ' - ' + lap_array[i] + ' - ' + dis_array[i] + '</h1>' + buildstring ;			
 								}
 								
 							$('#timeall').html(millisectime(timeall));
+							$('#distance').html(distance_log);
 							$('#mytime2').html(buildstring);
 							$('#timer').html(millisectotime(timeinterval));
 							
@@ -333,12 +345,13 @@
 									timealluse = 1;
 			
 									lap_array.push(millisectotime(timeinterval));
+									dis_array.push(distance_log);
 									
 									
 									var buildstring = "";
 										for(var i = 0; i < lap_array.length;i++)
 										{
-										buildstring =  '<h1 style="font-size:30px">' + (i+1) + ' - ' + lap_array[i] + '</h1>' + buildstring ;
+										buildstring =  '<h1 style="font-size:40px">' + (i+1) + ' - ' + lap_array[i] + ' - ' + dis_array[i] + '</h1>' + buildstring ;
 										}
 											
 									
