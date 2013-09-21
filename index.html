@@ -1,232 +1,596 @@
-<!DOCTYPE HTML> 
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-type" content="text/html; charset=utf-8">
-
-<title>RunforHealth</title>
-
-    <script type="text/javascript" charset="utf-8" src="cordova-2.5.0.js"></script>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
-    
-    
-	
-	<link href="bootstrap.css" rel="stylesheet">
-	<script src="bootstrap.js"></script>
-
-	
-<!-- CSS Style Sheet
-<link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css">
-<link rel="stylesheet" href="css/jquery.mobile.structure-1.3.1.css">
-
-<!-- JQM
-<script src="js/jquery-1.9.0.js"></script>
-<script src="js/jquery.mobile-1.3.1.min.js"></script>-->
-
-
-
-    <style type="text/css">
+	<meta charset="utf-8" />
+    <meta name="description" content="">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="cleartype" content="on">
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+		<link href="./css/bootstrap.css" rel="stylesheet">
+		<link href="./css/bootstrap-responsive.css" rel="stylesheet">
+		<link rel="stylesheet" href="./css/app.css">
+		<script src="http://code.jquery.com/jquery-latest.js"></script>
+		<!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>-->
+		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+		<script src="./js/bootstrap.js"></script>
+		
+<style type="text/css">
 	html {height:100%}
 	body {height:100%; margin:0; padding:0}
 	#map_canvas {height:100%; width:100%}
-	</style>
-    
-    <script type="text/javascript" charset="utf-8">
-    
-    // ----------------------Time Set--------------------------------------------------
-      var ms = 0;
-		var state = 0;
+</style>
+</head>
+<body>
+<div data-role="page" id="running">
+					<div data-role="header">
+						<h1>Exercise Healthy</h1>
+					</div>
+					
+						<script type="text/javascript" charset="utf-8" src="cordova-2.5.0.js"></script>
+						<table border="1" cellspacing="0" cellpadding="0" align="CENTER"  >
+					
+							<tr>
+								<td colspan="2" width="330" height="350">
+								<br>
+								<div id="map_canvas" align="center"></div>
+								</td>
+							</tr>						
+							<tr id="tr">
+								<td width="25px" height="5px" align="CENTER">
+									Distance<h1 id="distance" style="font-size:20px;">0 m</h1>
+									
+								</td>
+								<td width="25px" height="5px" align="CENTER">
+									Time<h1 id="timer" style="font-size:20px;">00:00:00</h1>
+								</td>
+							</tr>	
+						</table>
+						<br><br>						
+						<center>
+							<button type="button" id="btn-start-pause" class="btn btn-large btn-success" style="width:50%;height:50px;">Start</button>
+							<button type="button" id="btn-stop" class="btn btn-large btn-danger" style="width:50%;height:50px;">Stop</button>
+						</center>
 
-		function startstop() {
-			if (state == 0) {
-			state = 1;
-			then = new Date();
-			then.setTime(then.getTime() - ms);
-			}   
-			else {
-			state = 0;
-			now = new Date();
-			ms = now.getTime() - then.getTime();
+					<script type="text/javascript">  
+						var timeuse = 0;
+						var timealluse = 0;
+						var timeinterval = 0;
+						var timeall = 0;
+						var end = 0;
+						var distance_log = 0;
+						var lap_array = new Array();
+						var dis_array = new Array();
+						var path = [];
+						//var src = "";
+						//var visibleMap = map1;
+						//var hiddenMap = map2;
+						var Globals = {
+							totalDistance: 0,
+							latestDistance: 0,
+							latestTime: 0,
+							cntUpdates: 0,
+							startTime: Date.now(),
+							latestDistanceTime: 0
+						};
+						var distanceElement = document.getElementById('distance');
+						var latestPosition;
+						var lastDistanceTimeTemp = 0;
+						var R = 6371; // km
+						var toRad = Math.PI / 180;
+						
+						function millisectotime(mill)
+						{
+							var hour = Math.floor(timeinterval/36000);
+							var min = Math.floor(timeinterval/600)%60;
+							var sec = Math.floor(timeinterval/10)%60;
 
-			hours = Math.floor(ms%(1000 * 60 * 60 * 24)/(1000 * 60 * 60));
-			if (hours < 10)
-			hours = "0" + hours
+							if (hour < 10) hour = "0" + hour;
+							if (min < 10) min = "0" + min;
+							if (sec < 10) sec = "0" + sec;
+							return (hour + ":" + min + ":" + sec  );
 
-			minutes = Math.floor((ms%(1000 * 60 * 60))/(1000 * 60));
-			if (minutes < 10)
-			minutes = "0" + minutes
 
-			seconds = Math.floor((ms%(1000 * 60))/1000);
-			if (seconds < 10)
-			seconds = "0" + seconds
-    	
-			document.all('timer').innerHTML = '<h1>'+hours+':'+minutes+':'+seconds+'</h1>';
-   	   		}
-		}
+						}
 
-		function swreset() {
-			state = 0;
-			ms = 0;
-			document.all('timer').innerHTML = '<h1>00:00:00</h1>';  
-			
-		}
+						function TimerOK()
+						{	
+							timeinterval = timeinterval + 1;
+							$('#timer').html(millisectotime(timeinterval));
+							localStorage.setItem('timer_current',timeinterval);
+							localStorage.setItem('timer_history',JSON.stringify(lap_array));
+							
 
-		function display() {
-		setTimeout("display();", 500);
-		if (state == 1)  {
-		now = new Date();
-		ms = now.getTime() - then.getTime();
-		hours = Math.floor(ms%(1000 * 60 * 60 * 24)/(1000 * 60 * 60));
-		if (hours < 10)
-		hours = "0" + hours
+							if(timeuse == 1)
+							{
+								setTimeout('TimerOK()', 100);
+							}
+						}
 
-		minutes_divisor = ms%(1000 * 60 * 60);
-		minutes = Math.floor(minutes_divisor/(1000 * 60));
-		if (minutes < 10)
-		minutes = "0" + minutes
+						function millisectime(mills)
+						{
+							var hour = Math.floor(timeall/36000);
+							var min = Math.floor(timeall/600)%60;
+							var sec = Math.floor(timeall/10)%60;
 
-		seconds_divisor = ms%(1000 * 60);
-		seconds = Math.floor(seconds_divisor/1000);
-		if (seconds < 10)
-		seconds = "0" + seconds
+							if (hour < 10) hour = "0" + hour;
+							if (min < 10) min = "0" + min;
+							if (sec < 10) sec = "0" + sec;
 
-		document.all('timer').innerHTML = '<h1>'+hours+':'+minutes+':'+seconds+'</h1>';
-   		}
-		}
-        </script>
+							return (hour + ":" + min + ":" + sec);
+						}
 
-</head>  
-  
-<body>  
-   <div data-role="page" id="page">
+						function ResetTime()
+						{	
+							timeuse = 0;
+							timeinterval = 0;
+							$('#timer').html(millisectotime(timeinterval));
+						}
 
-    <!--<div class="btn-group btn-group-justified" align="CENTER">
-		<h1>RunforHealth</h1>
-	</div>-->
-	
-	<div class="navbar navbar-inverse navbar-static-top">
-		<div class="navbar-inner">
-			  <a class="brand" href="#" style="float:center"><center><h1>RunforHealth</h1></center></a>
-		</div>
-	</div><br>
-	
-	<table border="0" cellspacing="0" cellpadding="0" align="CENTER">
-	<tr>
-	<td colspan="2" width="351" height="251">
-	<div id="map_canvas" align="center"></div>
-	</td>
-	</tr>
+						function Timeall()
+						{
+							timeall = timeall + timeinterval;
+							$('#timeall').html(millisectime(timeall));
+							localStorage.setItem('time_all',timeall);
+							if(timealluse == 0)
+							{
+								setTimeout('Timeall()', 100);
+							}
+						}
+		
+		function Mapdis(){
+        //var options = { timeout: Infinity };
+        //var watchID = navigator.geolocation.watchPosition(initialize, onError, options);
 
-    </table>
-    <table border="0" cellspacing="0" cellpadding="0" align="CENTER">
-    <form NAME="stpw">
- <tr>
-	<td>
-    <h4>Time&nbsp;:&nbsp;</h4>
-    </td>
-    <td>
-	<div id="timer" class="logininput" align="center"><h1>00:00:00</h1></div>
-    </td>
-</tr>
-<tr>
-	<td colspan="2">
-	<div onClick="display()" align="center">
-	<button type="button" class="btn btn-small btn-success btn-block" style="width:100%;height:60px;" Name="ssbutton" onClick="startstop()">Start/Stop</button>
+var map; // ย“หนิตาแผ map ๅฉีฉานฺังยฌห‘ู เฟ—้ฃฬฉห’ย’รถแ•ยกใซฉศ’ู ษ’ย้นฮ—่บคีฉ  
+var GGM; // ย“หนิตาแผ GGM ๅฉเขงฺ google.maps Object ษไตฉแ•ยกใซฉศ’ฺคีฉศจำร–้น  
+var arr_path=[]; // ย“หนิตาแผห“ฬับเขงฺค้“ำ ฤ์ ติกหน่ง path  
+var makePolyline; // ย“หนิตาแผ เ ‘วก์ซ‘่น ห๊’งแฉู polylines  
+var objPolylines=[]; // ย“หนิตาแผห“ฬับเขงฺค้’ object รว polylines  
 
-	<div onClick="clearMapPolylines()" >
-	<button type="button" class="btn btn-large btn-primary btn-block" style="width:100%;height:60px;" NAME="reset" onClick="swreset()">End</button>
-	</div>
-	</div>
-	</form>
-    	</td>
-</tr>
-</table>
-</div>
- 
-    
-<script src="http://code.jquery.com/jquery-latest.js"></script>
-<script type="text/javascript">  
-
-        var options = { timeout: 30000 };
-        var watchID = navigator.geolocation.watchPosition(initialize, onError, options);
-
-var map; // ˹Ե҇ἃ map 利թҹڍѧ¬ˑ٠࿗鎣̩˒öᄕ¡㫩Ȓ٠ɒ釹Η躤թ  
-var GGM; // ˹Ե҇ἃ GGM 利ࢧڠgoogle.maps Object ɐ䵩ᄕ¡㫩ȒڤթȨӂÖ鹠 
-var arr_path=[]; // ˹Ե҇ἃ˓̃Ѻࢧڤ铍ӠĂ젵ԡ˹觠path  
-var makePolyline; // ˹Ե҇ἃ ࠑǡ쫑蹠˃꒧ዩ٠polylines  
-var objPolylines=[]; // ˹Ե҇ἃ˓̃Ѻࢧڤ钠object ÍǠpolylines  
-function initialize(position) { // ࠑǡ쫑ڡʴȡܹؕ蠠
-    GGM=new Object(google.maps); // ࢧڵ҇ἃ google.maps Object 利㹵҇ἃ GGM  
-    // ˹Ԩشᄔ遵鹢ͧἹؕ蠠
+////////////////////////////////////
+			if (!navigator.geolocation) {
+					alert("Geolocation is not supported by your browser");
+					return;
+			}
+									
+			navigator.geolocation.watchPosition(initialize, onError, {
+			enableHighAccuracy: true,
+			timeout: Infinity,
+			maximumAge: 10000 //10000
+			});			
+						
+//////////////////////////////////
+function initialize(position) { 
+    GGM=new Object(google.maps);
     var my_Latlng  = new GGM.LatLng(position.coords.latitude,position.coords.longitude);  
-    var my_mapTypeId=GGM.MapTypeId.ROADMAP; // ˹ՃٻẺἹؕ踕颊ԧ  
-    // ˹ԠDOM object ؕ詐᎒Ἱؕ餻⊴Ǡؕ躕饗͠div id=map_canvas  
+    var my_mapTypeId=GGM.MapTypeId.ROADMAP; 
     var my_DivObj=$("#map_canvas")[0];   
-    // ˹ԠOption Íȡܹؕ蠠
     var myOptions = {  
-        zoom: 16, // ˹ԢڒԡӃ zoom  
-        center: my_Latlng , // ˹Ԩش觡ƒǠ 
-        mapTypeId:my_mapTypeId // ˹ՃٻẺἹؕ蠠
+        zoom: 16, 
+        center: my_Latlng , 
+        mapTypeId:my_mapTypeId 
     };  
-    map = new GGM.Map(my_DivObj,myOptions);// ˃꒧Ἱؕ颅Ѡ§ڵ҇ἃ利㹪ب͠map  
+    map = new GGM.Map(my_DivObj,myOptions);
       
-     var my_Marker = new GGM.Marker({ // ˃꒧֑Ǡmarker  
-        position: my_Latlng,  // ˹դȩؕ頴ւǡѺɘԡרǡƒǠ 
-        map: map, // ˹Շ钠marker ڕ꣪频ܹۡؕ諗鍠instance ȨҠmap  
-        draggable:false, // ˹գ̩˒öƒu҇ marker ڕꤴ頠
-        title:"Ņԡƒ ߗ鎋ҵԡ˹觨شؕ趩ͧá" // ⊴Ǡtitle ႗鎠Β႒ˬ΂ڨዹ؍  
+     var my_Marker = new GGM.Marker({ 
+        position: my_Latlng,  
+        map: map,  
+        draggable:false, 
     });  
     
       
-    // ˹Ԡevent 䌩ڵ҇ marker ႗鎊թڊشąҡ֑Ǡmarker 䌩ؓȒڍѤà 
     GGM.event.addListener(map, "bounds_changed", function() {  
-        var my_Point = my_Marker.getPosition(my_Latlng);  // ̒֓⋹觢֑ͧǠmarker ႗鍡Յҡ↩ǻƨ΂  
-        arr_path.push(my_Point); // ࿔遤钵ԡ˹觠ɒu҇ marker ֓⋹訅铊ش  
-        map.panTo(my_Point);  // 䌩Ἱؕ颊ԧ价֑֨Ǡmarker ƨӊش  
-                  
-        makePolyline(arr_path); // ˨Ǥ钵ԡ˹訣٠array 伊ĩҧዩ٠polylines 㺡ܹؕ蠠
-//      console.log(arr_path);  
-    });      
-  
-    // ˹Ԡevent 䌩ڵ҇Ἱؕ衠鎁աӃ༅֨¹ἅǡӃ zoom  
-    /*GGM.event.addListener(map, "zoom_changed", function() {  
-        $("#zoom_value").val(map.getZoom()); // ᎒¹Ҵ zoom Íȡܹؕ颊ԧ㹠textbox id=zoom_value    
-    });  */
-}  
+        var my_Point = my_Marker.getPosition(my_Latlng);  
+        arr_path.push(my_Point);
+        map.panTo(my_Point);
+        if(end == 0){     
+        makePolyline(arr_path);
+		}
+    });
+	
+								if (latestPosition &&
+									position.coords.latitude === latestPosition.coords.latitude &&
+									position.coords.longitude === latestPosition.coords.longitude) {
+									return;
+								}
+
+								latestPosition = position;
+								path.push(latestPosition.coords);
+								
+								if(end == 0){
+									Globals.cntUpdates++;
+								}
+								// calculate total distance
+								if (Globals.cntUpdates > 1) {
+									Globals.latestDistance = distance(path[Globals.cntUpdates - 1], path[Globals.cntUpdates - 2]);
+									Globals.totalDistance += Globals.latestDistance;
+								}
+								
+
+							var totalDistanceString;
+								if (this.totalDistance > 1) {
+									totalDistanceString = Math.round(Globals.totalDistance * 1000) / 1000 + " km";
+									distance_log = Math.round((Globals.totalDistance * 1000) / 1000);
+								}
+								else {
+									totalDistanceString = Math.round(Globals.totalDistance * 1000) + " m";
+									distance_log = Math.round(Globals.totalDistance * 1000);
+								}
+
+								distanceElement.innerHTML = " " + totalDistanceString;				
+								} 
+								function distance(pos1, pos2) {
+								var lat1 = pos1.latitude;
+								var lon1 = pos1.longitude;
+								var lat2 = pos2.latitude;
+								var lon2 = pos2.longitude;
+
+								var dLat = (lat2 - lat1) * toRad;
+								var dLon = (lon2 - lon1) * toRad;
+								lat1 = lat1 * toRad;
+								lat2 = lat2 * toRad;
+
+								var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+									Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+								var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+								var d = R * c;
+
+								return d;
+							}
+							localStorage.setItem('distance_current',distance_log);
+							localStorage.setItem('distance_history',JSON.stringify(dis_array));
+							
+							makePolyline=function(arr_path){  
+							var i=arr_path.length-1;  
+							objPolylines[i] = new GGM.Polyline({ 
+								path: arr_path,
+								strokeColor: "#FF0000",
+								strokeOpacity: 1.0, 
+								strokeWeight: 2
+							});   
+							objPolylines[i].setMap(map);    
+							}  
+							
+							clearMapPolylines=function(){  
+								arr_path=[];      
+							for(i=0;i<objPolylines.length;i++){
+								objPolylines[i].setMap(null);  
+							}  
+							}
+}
 
 function onError(error) {
         alert('code: '    + error.code    + '\n' +
               'message: ' + error.message + '\n');
     }
+	
+
+				$(document).ready(function() { // On page load completed do it function.
+							var status = 0;
+							var btntoggle = 0;
+							var btntoggles  =0;
+							
+							if(localStorage.getItem('timer_history') && localStorage.getItem('timer_current')){
+								lap_array = JSON.parse(localStorage.getItem('timer_history'));
+								timeinterval = parseInt(localStorage.getItem('timer_current'));
+							}
+							
+							if(localStorage.getItem('distance_history') && localStorage.getItem('distance_current')){
+								dis_array = JSON.parse(localStorage.getItem('distance_history'));
+								distance_log = parseInt(localStorage.getItem('distance_current'));
+							}
+							
+							if(localStorage.getItem('time_all'))
+							{
+									timeall = parseInt(localStorage.getItem('time_all'));
+							}		
+							var buildstring = "";
+
+								for(var i = 0; i < lap_array.length;i++)
+								{
+									buildstring =  '<h1 style="font-size:40px">' + (i+1) + ' - ' + lap_array[i] + ' - ' + dis_array[i] + '</h1>' + buildstring ;			
+								}
+								
+							$('#timeall').html(millisectime(timeall));
+							$('#distance').html(distance_log);
+							$('#mytime2').html(buildstring);
+							$('#timer').html(millisectotime(timeinterval));
+							
+	
+							$('#btn-delall').on('click',function(){
+								localStorage.removeItem('timer_current');
+								localStorage.removeItem('timer_history');
+								timeinterval = 0;
+								$('#timer').html(millisectotime(timeinterval));
+								$('#mytime').html("");
+								$('#mytime2').html("");
+									lap_array.length = 0;
+									dis_array.length = 0;
+							});
+	
+
+							$('#btn-start-pause').on('click',function(){
+								if (btntoggle == 0)
+								{
+									$('#btn-start-pause').removeClass("btn-success");
+									$('#btn-start-pause').addClass("btn-inverse");
+									$('#btn-start-pause').html('Pause');
+								
+									timeuse = 1;								
+									TimerOK();
+									Mapdis();
+									btntoggle = 1;
+									end = 0;
+									
+								
+								}
+								else
+								{
+									$('#btn-pause').removeClass("btn-inverse");
+									$('#btn-pause').addClass("btn-success");
+									$('#btn-pause').html('Start');
+									timeuse = 0;
+									btntoggles =1;
+								}
+							});	
+									
+							$('#btn-stop').on('click',function(){	
+
+									$('#btn-start-pause').removeClass("btn-inverse");
+									$('#btn-start-pause').addClass("btn-success");
+									$('#btn-start-pause').html('Start');
+									$('#distance').html('0 m');
+									
+									btntoggle = 0;
+									Timeall();
+									timealluse = 1;
+									end =1;
+									dis_array.push(distance_log);
+									lap_array.push(millisectotime(timeinterval));
+									//dis_array.push(distance_log);
+									
+									
+									var buildstring = "";
+										for(var i = 0; i < lap_array.length;i++)
+										{
+										buildstring =  '<h1 style="font-size:40px">' + (i+1) + ' - ' + lap_array[i] + ' - ' + dis_array[i] + '</h1>' + buildstring ;
+										}
+											
+									
+									$('#mytime2').html(buildstring);
+									ResetTime();
+									
+									//////////////////////
+									path = [];
+									Globals.cntUpdates = 0;
+									Globals.totalDistance = 0;
+									initialize(latestPosition);
+									clearMapPolylines();
+								
+									///////////////////////
+									
+								
+							});
+					});
   
-makePolyline=function(arr_path){  
-//  console.log(arr_path.length);  
-    var i=arr_path.length-1;  
-    objPolylines[i] = new GGM.Polyline({ // ˹ՃٻẺÍȠ˩٠polylines  
-        path: arr_path,// array ֓⋹觷֨ࢧڤ钠lat,lon  
-        strokeColor: "#FF0000", // ˕  
-        strokeOpacity: 1.0, // ŇӁ⼃訣ʠ 
-        strokeWeight: 2 //ŇӁ˹꒢ͧዩ٠ 
-    });   
-    objPolylines[i].setMap(map);    // ˃꒧ዩ٠polylines 㺡ܹؕ蠠
-//  console.log(arr_path);  
-//  console.log(objPolylines);  
-}  
-clearMapPolylines=function(){  
-    arr_path=[];      
-    for(i=0;i<objPolylines.length;i++){  
-//      console.log(i);  
-        objPolylines[i].setMap(null);  
-    }  
-  
-//  console.log(arr_path);  
-}  
 $(function(){  
     $("<script/>", {  
       "type": "text/javascript",  
       src: "http://maps.google.com/maps/api/js?v=3.2&sensor=false&language=th&callback=initialize"  
     }).appendTo("body");      
-});  
-</script>    
-</body>  
-</html>  
+});
+
+					</script>   
+					
+					<div data-role="footer" data-position="fixed" class="nav-glyphish-example">
+						
+						<div data-role="navbar" class="nav-glyphish-example" data-grid="c">
+							<ul>
+								<li><a href="#running" id="brunning" >Running</a></li>
+								<li><a href="#route" id="broute">Route</a></li>
+								<li><a href="#friend" id="bfriend" >Friend</a></li>
+								<li><a href="#history" id="bhistory" >History</a></li>
+							</ul>
+						</div>
+					</div>		
+		</div>					
+
+		<div data-role="page" id="route">
+					<div data-role="header">
+						<h1>Exercise Healthy</h1>
+					</div>
+		2
+
+					<div data-role="footer" data-position="fixed" class="nav-glyphish-example">
+						<div data-role="navbar" class="nav-glyphish-example" data-grid="c">
+							<ul>
+								<li><a href="#running" id="brunning" >Running</a></li>
+								<li><a href="#route" id="broute">Route</a></li>
+								<li><a href="#friend" id="bfriend" >Friend</a></li>
+								<li><a href="#history" id="bhistory" >History</a></li>
+							</ul>
+						</div>
+					</div>	
+		</div>
+
+		<div data-role="page" id="friend">
+					<div data-role="header">
+						<h1>Exercise Healthy</h1>
+					</div>
+		3
+
+					<div data-role="footer" data-position="fixed" class="nav-glyphish-example">
+						<div data-role="navbar" class="nav-glyphish-example" data-grid="c">
+							<ul>
+								<li><a href="#running" id="brunning" >Running</a></li>
+								<li><a href="#route" id="broute">Route</a></li>
+								<li><a href="#friend" id="bfriend" >Friend</a></li>
+								<li><a href="#history" id="bhistory" >History</a></li>
+							</ul>
+						</div>
+					</div>	
+		</div>
+
+		<div data-role="page" id="history">
+					<div data-role="header">
+						<h1>History</h1>
+					</div>
+					<style>
+						.block {
+								display: block;
+								margin: 0 0 10px;
+								font-size: 13px;
+								word-break: break-all;
+								word-wrap: break-word;
+								background-color: #cccccc;
+								border: 1px solid #ccc;
+								border: 1px solid rgba(0, 0, 0, 0.15);
+								-webkit-border-radius: 4px;
+								-moz-border-radius: 4px;
+								border-radius: 4px;
+								}
+					</style>
+					
+					<div id="mytimeblock1" class="block" style="overflow-x: hidden;overflow-y: scroll;height:60%;margin: 0px 5px 5px 5px;">
+						<center id="mytime2">
+						
+						</center>
+					</div>
+						<!--<button type="button" id="btn-delall" class="btn-danger" style="width:100%;height:60px;margin:140% 0% 0% 0%">DELETE ALL DATA</button>-->
+	
+					<div data-role="footer" data-position="fixed" class="nav-glyphish-example">
+						<div data-role="navbar" class="nav-glyphish-example" data-grid="c">
+							<ul>
+								<li><a href="#running" id="brunning" >Running</a></li>
+								<li><a href="#total time" id="bTotal">Total Time</a></li>
+								<li><a href="#total distanc" id="bdistanc" >Total Distanc</a></li>
+								<li><a href="#total best" id="bbest" >Total Best</a></li>
+							</ul>
+						</div>
+					</div>
+		</div>
+		
+		<div data-role="page" id="total time">
+					<div data-role="header">
+						<h1>Exercise Healthy</h1>
+					</div>
+					<style>
+						.block {
+								display: block;
+								margin: 0 0 10px;
+								font-size: 13px;
+								word-break: break-all;
+								word-wrap: break-word;
+								background-color: #cccccc;
+								border: 1px solid #ccc;
+								border: 1px solid rgba(0, 0, 0, 0.15);
+								-webkit-border-radius: 4px;
+								-moz-border-radius: 4px;
+								border-radius: 4px;
+								}
+					</style>
+					
+					<div id="mytimeblock2" class="block" style="height:100%">
+					<br><br><br>
+						<h1><center>Total Time</center></h1>
+						<h1><center id="timeall"></h1>
+						
+						</center>
+						<button type="button" id="btn-reset" class="btn-danger" style="width:50%;height:60px;margin:140% 0% 0% 0%">Reset</button>
+					<div data-role="footer" data-position="fixed" class="nav-glyphish-example">
+						<div data-role="navbar" class="nav-glyphish-example" data-grid="c">
+							<ul>
+								<li><a href="#running" id="brunning" >Running</a></li>
+								<li><a href="#total time" id="bTotal">Total Time</a></li>
+								<li><a href="#total distanc" id="bdistanc" >Total Distanc</a></li>
+								<li><a href="#total best" id="bbest" >Total Best</a></li>
+							</ul>
+						</div>
+					</div>	
+					</div>
+		</div>			
+		
+		<div data-role="page" id="total distanc">
+					<div data-role="header">
+						<h1>Exercise Healthy</h1>
+					</div>
+					<style>
+						.block {
+								display: block;
+								margin: 0 0 10px;
+								font-size: 13px;
+								word-break: break-all;
+								word-wrap: break-word;
+								background-color: #cccccc;
+								border: 1px solid #ccc;
+								border: 1px solid rgba(0, 0, 0, 0.15);
+								-webkit-border-radius: 4px;
+								-moz-border-radius: 4px;
+								border-radius: 4px;
+								}
+					</style>
+					
+					<div id="mytimeblock3" class="block" style="overflow-x: hidden;overflow-y: scroll;height:60%;margin: 0px 5px 5px 5px;">
+						<center>Total distanc</center>
+						
+						<center id="distance">
+						
+						</center>
+						
+					<div data-role="footer" data-position="fixed" class="nav-glyphish-example">
+						<div data-role="navbar" class="nav-glyphish-example" data-grid="c">
+							<ul>
+								<li><a href="#running" id="brunning" >Running</a></li>
+								<li><a href="#total time" id="bTotal">Total Time</a></li>
+								<li><a href="#total distanc" id="bdistanc" >Total Distanc</a></li>
+								<li><a href="#total best" id="bbest" >Total Best</a></li>
+							</ul>
+						</div>
+					</div>				
+					</div>
+					
+		</div>			
+		
+		<div data-role="page" id="total best">
+					<div data-role="header">
+						<h1>Exercise Healthy</h1>
+					</div>
+					<style>
+						.block {
+								display: block;
+								margin: 0 0 10px;
+								font-size: 13px;
+								word-break: break-all;
+								word-wrap: break-word;
+								background-color: #cccccc;
+								border: 1px solid #ccc;
+								border: 1px solid rgba(0, 0, 0, 0.15);
+								-webkit-border-radius: 4px;
+								-moz-border-radius: 4px;
+								border-radius: 4px;
+								}
+					</style>
+					
+					<div id="mytimeblock4" class="block" style="overflow-x: hidden;overflow-y: scroll;height:60%;margin: 0px 5px 5px 5px;">
+						<h1><center>Total Best</center></h1>
+						<h1><center id="totalbest"></h1>
+						
+						</center>
+
+					<div data-role="footer" data-position="fixed" class="nav-glyphish-example">
+						<div data-role="navbar" class="nav-glyphish-example" data-grid="c">
+							<ul>
+								<li><a href="#running" id="brunning" >Running</a></li>
+								<li><a href="#total time" id="bTotal">Total Time</a></li>
+								<li><a href="#total distanc" id="bdistanc" >Total Distanc</a></li>
+								<li><a href="#total best" id="bbest" >Total Best</a></li>
+							</ul>
+						</div>
+					</div>	
+					</div>
+		</div>
+		
+	</body>
+</html> 
