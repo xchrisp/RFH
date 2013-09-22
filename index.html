@@ -306,11 +306,11 @@
 
 								for(var i = 0; i < lap_array.length;i++)
 								{
-									buildstring =  '<h1 style="font-size:40px">' + (i+1) + ' Time ' + lap_array[i] + ' Distance ' + dis_array[i] + ' m' +'</h1>' + buildstring ;		
+									buildstring =  '<h1 style="font-size:30px">' + (i+1) + ' Time ' + lap_array[i] + ' Distance ' + dis_array[i] + ' m' +'</h1>' + buildstring ;		
 								}
 								
 							$('#timeall').html(millisectime(timeall));
-							$('#distance').html(distance_log);
+							$('#distance').html(distance_log + ' m');
 							$('#mytime2').html(buildstring);
 							$('#timer').html(millisectotime(timeinterval));
 							
@@ -365,7 +365,7 @@
 									Distancetotal();									
 									timealluse = 1;
 									timeuse = 0;
-									btntoggle = 1;
+									btntoggle = 0;
 									end =1;
 									dis_array.push(distance_log);
 									lap_array.push(millisectotime(timeinterval));
@@ -375,7 +375,7 @@
 									var buildstring = "";
 										for(var i = 0; i < lap_array.length;i++)
 										{
-										buildstring =  '<h1 style="font-size:40px">' + (i+1) + ' Time ' + lap_array[i] + ' Distance ' + dis_array[i] + ' m' +'</h1>' + buildstring ;
+										buildstring =  '<h1 style="font-size:30px">' + (i+1) + ' Time ' + lap_array[i] + ' Distance ' + dis_array[i] + ' m' +'</h1>' + buildstring ;
 										}
 											
 									
