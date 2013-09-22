@@ -136,8 +136,8 @@
 						}
 		
 	function Mapdis(){
-        //var options = { timeout: Infinity };
-        //var watchID = navigator.geolocation.watchPosition(initialize, onError, options);
+        var options = { timeout: Infinity };
+        var watchID = navigator.geolocation.watchPosition(initialize, onError, options);
 
 var map; // ย“หนิตาแผ map ๅฉีฉานฺังยฌห‘ู เฟ—้ฃฬฉห’ย’รถแ•ยกใซฉศ’ู ษ’ย้นฮ—่บคีฉ  
 var GGM; // ย“หนิตาแผ GGM ๅฉเขงฺ google.maps Object ษไตฉแ•ยกใซฉศ’ฺคีฉศจำร–้น  
@@ -146,7 +146,7 @@ var makePolyline; // ย“หนิตาแผ เ ‘วก์ซ‘่�
 var objPolylines=[]; // ย“หนิตาแผห“ฬับเขงฺค้’ object รว polylines  
 
 ////////////////////////////////////
-			if (!navigator.geolocation) {
+			/*if (!navigator.geolocation) {
 					alert("Geolocation is not supported by your browser");
 					return;
 			}
@@ -154,7 +154,7 @@ var objPolylines=[]; // ย“หนิตาแผห“ฬับเข�
 			navigator.geolocation.watchPosition(initialize, onError, {
 			timeout: Infinity,
 			maximumAge: 10000 //10000
-			});		
+			});	*/	
 						
 //////////////////////////////////
 function initialize(position) { 
