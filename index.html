@@ -1,6 +1,7 @@
 <html>
 <head>
-	<meta charset="utf-8" />
+  <meta charset="utf-8" />
+
     <meta name="description" content="">
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
@@ -9,31 +10,28 @@
 		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
 		<link href="./css/bootstrap.css" rel="stylesheet">
 		<link href="./css/bootstrap-responsive.css" rel="stylesheet">
-		<link rel="stylesheet" href="./css/app.css">
-		<script src="http://code.jquery.com/jquery-latest.js"></script>
+		<link rel="stylesheet" href="./css/app.css">	
 		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 		<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
-		<script src="./js/bootstrap.js"></script>
 		
-<style type="text/css">
-	html {height:100%}
-	body {height:100%; margin:0; padding:0}
-	#map_canvas {height:100%; width:100%}
-</style>
 </head>
-<body>
-<div data-role="page" id="running">
+	<body style="overflow:hidden" onload="onDeviceReady()">
+
+		<div data-role="page" id="running">
 					<div data-role="header">
 						<h1>Exercise Healthy</h1>
 					</div>
 					
 						<script type="text/javascript" charset="utf-8" src="cordova-2.5.0.js"></script>
+						<!--<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>-->
+						
 						<table border="1" cellspacing="0" cellpadding="0" align="CENTER"  >
 					
 							<tr>
 								<td colspan="2" width="330" height="350">
 								<br>
-								<div id="map_canvas" align="center"></div>
+									<img id="map1"/>
+									<img id="map2"/>
 								</td>
 							</tr>						
 							<tr id="tr">
@@ -49,19 +47,24 @@
 						<br><br>						
 						<center>
 							<button type="button" id="btn-start-pause" class="btn btn-large btn-success" style="width:50%;height:50px;">Start</button>
-							<button type="button" id="btn-stop" class="btn btn-large btn-danger" style="width:50%;height:50px;">Stop</button>
+							<button type="button" id="btn-stop" class="btn btn-large btn-danger " style="width:50%;height:50px;">Stop</button>
 						</center>
-
-					<script type="text/javascript">  
+										
+						<script src="./js/bootstrap.js"></script>		
+						<script language="javascript">
 						var timeuse = 0;
 						var timealluse = 0;
 						var timeinterval = 0;
 						var timeall = 0;
 						var end = 0;
+						var distancetotal_x = 0;
 						var distance_log = 0;
 						var lap_array = new Array();
 						var dis_array = new Array();
 						var path = [];
+						var src = "";
+						var visibleMap = map1;
+						var hiddenMap = map2;
 						var Globals = {
 							totalDistance: 0,
 							latestDistance: 0,
@@ -70,12 +73,7 @@
 							startTime: Date.now(),
 							latestDistanceTime: 0
 						};
-						var distanceElement = document.getElementById('distance');
-						var latestPosition;
-						var lastDistanceTimeTemp = 0;
-						var R = 6371; // km
-						var toRad = Math.PI / 180;
-						
+
 						function millisectotime(mill)
 						{
 							var hour = Math.floor(timeinterval/36000);
@@ -134,57 +132,62 @@
 								setTimeout('Timeall()', 100);
 							}
 						}
-		
-	function Mapdis(){
-        var options = { timeout: Infinity };
-        var watchID = navigator.geolocation.watchPosition(initialize, onError, options);
-
-var map; // ย“หนิตาแผ map ๅฉีฉานฺังยฌห‘ู เฟ—้ฃฬฉห’ย’รถแ•ยกใซฉศ’ู ษ’ย้นฮ—่บคีฉ  
-var GGM; // ย“หนิตาแผ GGM ๅฉเขงฺ google.maps Object ษไตฉแ•ยกใซฉศ’ฺคีฉศจำร–้น  
-var arr_path=[]; // ย“หนิตาแผห“ฬับเขงฺค้“ำ ฤ์ ติกหน่ง path  
-var makePolyline; // ย“หนิตาแผ เ ‘วก์ซ‘่น ห๊’งแฉู polylines  
-var objPolylines=[]; // ย“หนิตาแผห“ฬับเขงฺค้’ object รว polylines  
-
-////////////////////////////////////
-			/*if (!navigator.geolocation) {
-					alert("Geolocation is not supported by your browser");
-					return;
-			}
-									
-			navigator.geolocation.watchPosition(initialize, onError, {
-			timeout: Infinity,
-			maximumAge: 10000 //10000
-			});	*/	
 						
-//////////////////////////////////
-function initialize(position) { 
-    GGM=new Object(google.maps);
-    var my_Latlng  = new GGM.LatLng(position.coords.latitude,position.coords.longitude);  
-    var my_mapTypeId=GGM.MapTypeId.ROADMAP; 
-    var my_DivObj=$("#map_canvas")[0];   
-    var myOptions = {  
-        zoom: 16, 
-        center: my_Latlng , 
-        mapTypeId:my_mapTypeId 
-    };  
-    map = new GGM.Map(my_DivObj,myOptions);
-      
-     var my_Marker = new GGM.Marker({ 
-        position: my_Latlng,  
-        map: map,  
-        draggable:false, 
-    });  
-    
-      
-    GGM.event.addListener(map, "bounds_changed", function() {  
-        var my_Point = my_Marker.getPosition(my_Latlng);  
-        arr_path.push(my_Point);
-        map.panTo(my_Point);
-        if(end == 0){     
-        makePolyline(arr_path);
-		}
-    });
-	
+						function Distancetotal()
+						{
+							distancetotal_x = distancetotal_x + distance_log;
+							$('#distancetotal_block3').html(distancetotal_x + ' m');
+							localStorage.setItem('distance_total',distancetotal_x);						
+						}
+				
+						
+	//----------map----------------				
+//$('#btn-start-pause').on('click',function() {
+						function Map(){
+							
+
+							var distanceElement = document.getElementById('distance');
+							var map1 = document.getElementById('map1');
+							var map2 = document.getElementById('map2');
+
+							var latestPosition;
+							var lastDistanceTimeTemp = 0;
+
+							// setup two images that can fade from one to the other when new maps are loaded
+						   
+								map1.addEventListener('load', function () {
+								map1.style.opacity = 1;
+								map1.style.transitionDelay = 0;
+								map2.style.opacity = 0;
+								map2.style.transitionDelay = "0.3s";
+
+								visibleMap = map1;
+								hiddenMap = map2;
+								});
+								
+								map2.addEventListener('load', function () {
+								map2.style.opacity = 1;
+								map2.style.transitionDelay = 0;
+								map1.style.opacity = 0;
+								map1.style.transitionDelay = "0.3s";
+
+								visibleMap = map2;
+								hiddenMap = map1;
+								});
+
+							// setup geolocation
+								if (!navigator.geolocation) {
+									alert("Geolocation is not supported by your browser");
+									return;
+								}
+									
+									navigator.geolocation.watchPosition(update, locationError, {
+									enableHighAccuracy: true,
+									timeout: Infinity,
+									maximumAge: 5000 //10000
+								});
+							
+							function update(position) {
 								if (latestPosition &&
 									position.coords.latitude === latestPosition.coords.latitude &&
 									position.coords.longitude === latestPosition.coords.longitude) {
@@ -202,7 +205,6 @@ function initialize(position) {
 									Globals.latestDistance = distance(path[Globals.cntUpdates - 1], path[Globals.cntUpdates - 2]);
 									Globals.totalDistance += Globals.latestDistance;
 								}
-								
 
 							var totalDistanceString;
 								if (this.totalDistance > 1) {
@@ -213,10 +215,48 @@ function initialize(position) {
 									totalDistanceString = Math.round(Globals.totalDistance * 1000) + " m";
 									distance_log = Math.round(Globals.totalDistance * 1000);
 								}
+								//localStorage.setItem('distance_current',distance_log);
+								//localStorage.setItem('distance_history',JSON.stringify(dis_array));
+								
+								
+								distanceElement.innerHTML = " " + totalDistanceString;
+								
+								
+								// find screen size (show biggest possible map for device)
+							var screenSize = 300 + "x" + 300;
 
-								distanceElement.innerHTML = " " + totalDistanceString;				
-								} 
-								function distance(pos1, pos2) {
+								// setup map
+								src = "http://maps.googleapis.com/maps/api/staticmap?size=" + screenSize + "&sensor=true&path=";
+
+								// add path to map
+								
+									for (var i = 0; i < Globals.cntUpdates; i++) {
+										if (i !== 0) src += "|";
+										src += path[i].latitude + "," + path[i].longitude;
+									}
+									
+								// put marker at start and end of route
+								src += "&markers=" + path[0].latitude + "," + path[0].longitude + "|" +
+									path[path.length - 1].latitude + "," + path[path.length - 1].longitude;
+
+								// key
+								src += "&key=AIzaSyBV0yKqrMLMHwfmqEbKVR0xj7qreibCc2M";
+								
+								// load map, when loaded it will fade in
+								hiddenMap.src = src;
+								
+							}
+
+							// handle geolocation errors
+							function locationError() {
+								alert("Could not find your position. Did you allow the app to use geo location?");
+							}
+
+							// calculate distance between two positions
+							var R = 6371; // km
+							var toRad = Math.PI / 180;
+
+							function distance(pos1, pos2) {
 								var lat1 = pos1.latitude;
 								var lon1 = pos1.longitude;
 								var lat2 = pos2.latitude;
@@ -234,47 +274,28 @@ function initialize(position) {
 
 								return d;
 							}
-							localStorage.setItem('distance_current',distance_log);
-							localStorage.setItem('distance_history',JSON.stringify(dis_array));
 							
-							makePolyline=function(arr_path){  
-							var i=arr_path.length-1;  
-							objPolylines[i] = new GGM.Polyline({ 
-								path: arr_path,
-								strokeColor: "#FF0000",
-								strokeOpacity: 1.0, 
-								strokeWeight: 2
-							});   
-							objPolylines[i].setMap(map);    
-							}  
-							
-							clearMapPolylines=function(){  
-								arr_path=[];      
-							for(i=0;i<objPolylines.length;i++){
-								objPolylines[i].setMap(null);  
-							}  
-							}
-}
+						}
+//});
 
-function onError(error) {
-        alert('code: '    + error.code    + '\n' +
-              'message: ' + error.message + '\n');
-    }
-	
+						// ----------------------------------------------------
 
-				$(document).ready(function() { // On page load completed do it function.
+						$(document).ready(function() { // On page load completed do it function.
 							var status = 0;
 							var btntoggle = 0;
 							var btntoggles  =0;
+							
 							
 							if(localStorage.getItem('timer_history') && localStorage.getItem('timer_current')){
 								lap_array = JSON.parse(localStorage.getItem('timer_history'));
 								timeinterval = parseInt(localStorage.getItem('timer_current'));
 							}
 							
-							if(localStorage.getItem('distance_history') && localStorage.getItem('distance_current')){
+							//if(localStorage.getItem('distance_history') && localStorage.getItem('distance_current')){
+							if(localStorage.getItem('distance_history'))
+							{
 								dis_array = JSON.parse(localStorage.getItem('distance_history'));
-								distance_log = parseInt(localStorage.getItem('distance_current'));
+								//distance_log = parseInt(localStorage.getItem('distance_current'));
 							}
 							
 							if(localStorage.getItem('time_all'))
@@ -285,7 +306,7 @@ function onError(error) {
 
 								for(var i = 0; i < lap_array.length;i++)
 								{
-									buildstring =  '<h1 style="font-size:40px">' + (i+1) + ' - ' + lap_array[i] + ' - ' + dis_array[i] + '</h1>' + buildstring ;			
+									buildstring =  '<h1 style="font-size:40px">' + (i+1) + ' Time ' + lap_array[i] + ' Distance ' + dis_array[i] + ' m' +'</h1>' + buildstring ;		
 								}
 								
 							$('#timeall').html(millisectime(timeall));
@@ -312,10 +333,11 @@ function onError(error) {
 									$('#btn-start-pause').removeClass("btn-success");
 									$('#btn-start-pause').addClass("btn-inverse");
 									$('#btn-start-pause').html('Pause');
-								
-									timeuse = 1;								
+									
+									
+									Map();
+									timeuse = 1;
 									TimerOK();
-									Mapdis();
 									btntoggle = 1;
 									end = 0;
 									
@@ -323,13 +345,14 @@ function onError(error) {
 								}
 								else
 								{
-									$('#btn-pause').removeClass("btn-inverse");
-									$('#btn-pause').addClass("btn-success");
-									$('#btn-pause').html('Start');
+									$('#btn-start-pause').removeClass("btn-inverse");
+									$('#btn-start-pause').addClass("btn-success");
+									$('#btn-start-pause').html('Start');
 									timeuse = 0;
-									btntoggles =1;
+									btntoggle =0;
 								}
 							});	
+									
 									
 							$('#btn-stop').on('click',function(){	
 
@@ -338,19 +361,21 @@ function onError(error) {
 									$('#btn-start-pause').html('Start');
 									$('#distance').html('0 m');
 									
-									btntoggle = 0;
 									Timeall();
+									Distancetotal();									
 									timealluse = 1;
+									timeuse = 0;
+									btntoggle = 1;
 									end =1;
 									dis_array.push(distance_log);
 									lap_array.push(millisectotime(timeinterval));
-									//dis_array.push(distance_log);
+									localStorage.setItem('distance_history',JSON.stringify(dis_array));
 									
 									
 									var buildstring = "";
 										for(var i = 0; i < lap_array.length;i++)
 										{
-										buildstring =  '<h1 style="font-size:40px">' + (i+1) + ' - ' + lap_array[i] + ' - ' + dis_array[i] + '</h1>' + buildstring ;
+										buildstring =  '<h1 style="font-size:40px">' + (i+1) + ' Time ' + lap_array[i] + ' Distance ' + dis_array[i] + ' m' +'</h1>' + buildstring ;
 										}
 											
 									
@@ -361,24 +386,18 @@ function onError(error) {
 									path = [];
 									Globals.cntUpdates = 0;
 									Globals.totalDistance = 0;
-									//initialize(latestPosition);
-									//clearMapPolylines();
+									update(latestPosition)
+									src = null;
+									visibleMap = null;
+									hiddenMap = null;
 								
 									///////////////////////
 									
 								
-							});
-					});
-  
-$(function(){  
-    $("<script/>", {  
-      "type": "text/javascript",
-      src: "http://maps.google.com/maps/api/js?v=3.2&sensor=false&language=th&callback=initialize"  
-    }).appendTo("body");      
-});
+							});							
+						});
 
-					</script>   
-					
+</script>
 					<div data-role="footer" data-position="fixed" class="nav-glyphish-example">
 						
 						<div data-role="navbar" class="nav-glyphish-example" data-grid="c">
@@ -453,7 +472,7 @@ $(function(){
 						
 						</center>
 					</div>
-						<!--<button type="button" id="btn-delall" class="btn-danger" style="width:100%;height:60px;margin:140% 0% 0% 0%">DELETE ALL DATA</button>-->
+						<button type="button" id="btn-delall" class="btn-danger" style="width:100%;height:60px;margin:140% 0% 0% 0%">DELETE ALL DATA</button>
 	
 					<div data-role="footer" data-position="fixed" class="nav-glyphish-example">
 						<div data-role="navbar" class="nav-glyphish-example" data-grid="c">
@@ -527,10 +546,10 @@ $(function(){
 								}
 					</style>
 					
-					<div id="mytimeblock3" class="block" style="overflow-x: hidden;overflow-y: scroll;height:60%;margin: 0px 5px 5px 5px;">
-						<center>Total distanc</center>
-						
-						<center id="distance">
+					<div id="mytimeblock3" class="block" style="height:100%">
+						<br><br><br>
+						<h1><center>Total distance</center></h1>						
+						<h1><center id="distancetotal_block3"></h1>
 						
 						</center>
 						
@@ -588,4 +607,4 @@ $(function(){
 		</div>
 		
 	</body>
-</html> 
+</html>
