@@ -197,9 +197,9 @@
 								latestPosition = position;
 								path.push(latestPosition.coords);
 								
-								if(end == 0){
+								//if(end == 0){
 									Globals.cntUpdates++;
-								}
+								//}
 								// calculate total distance
 								if (Globals.cntUpdates > 1) {
 									Globals.latestDistance = distance(path[Globals.cntUpdates - 1], path[Globals.cntUpdates - 2]);
