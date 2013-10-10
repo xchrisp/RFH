@@ -155,11 +155,22 @@
 									tmp = dis_arraytop[j];
 									dis_arraytop[j] = dis_arraytop[j-1];
 									dis_arraytop[j-1] = tmp;
-					
+									
 									tmp1 = lap_arraytop[j];
 									lap_arraytop[j] = lap_arraytop[j-1];
 									lap_arraytop[j-1] = tmp1;
+									
+									
 								}
+								if(dis_arraytop[j-1] == dis_arraytop[j] && lap_arraytop[j-1] > lap_arraytop[j]){
+									tmp = dis_arraytop[j];
+									dis_arraytop[j] = dis_arraytop[j-1];
+									dis_arraytop[j-1] = tmp;
+									
+									tmp1 = lap_arraytop[j];
+									lap_arraytop[j] = lap_arraytop[j-1];
+									lap_arraytop[j-1] = tmp1;
+									}
 							}
 							
 						}
@@ -347,18 +358,12 @@
 								{
 									buildstring =  '<h1 style="font-size:30px">' + (i+1) + ' Time ' + lap_array[i] + ' Distance ' + dis_array[i] + ' m' +'</h1>' + buildstring ;		
 								}
-							//////
-								var test = "";
-									test = dis_arraytop[0];
-									$('#t').html(test);
-							/////
+				
 							best();
 							var topfive = "";
 									for (var i = 0; i < time.length; i++){
 										topfive = '<h1 style="font-size:30px">' + (i+1) + ' Distance ' + dis_arraytop[i] + ' m' + ' Time ' + lap_arraytop[i] +'</h1>' + topfive ;
-							
-										//document.write(arr_dis[i]+"<br>");
-										//document.write(arr_time[i] + "<br>");
+
 										$('#topbest5').html(topfive);
 									}
 							
@@ -427,7 +432,7 @@
 									$('#distance').html('0 m');
 									
 									Timeall();
-									//best();
+								
 									Distancetotal();									
 									timealluse = 1;
 									timeuse = 0;
@@ -439,13 +444,7 @@
 									lap_arraytop.push(millisectotime(timeinterval));
 									localStorage.setItem('distance_history',JSON.stringify(dis_array));
 									localStorage.setItem('distance_top',JSON.stringify(dis_arraytop));
-									
-									//////
-									var test = "";
-									test = dis_arraytop[0];
-									$('#t').html(test);
-									/////
-									
+											
 									var buildstring = "";
 										for(var i = 0; i < lap_array.length;i++)
 										{
@@ -457,9 +456,6 @@
 									var topfive = "";
 									for (var i = 0; i < time.length; i++){
 										topfive = '<h1 style="font-size:30px">' + (i+1) + ' Distance ' + dis_arraytop[i] + ' m' + ' Time ' + lap_array[i] +'</h1>' + topfive ;
-							
-										//document.write(arr_dis[i]+"<br>");
-										//document.write(arr_time[i] + "<br>");
 										$('#topbest5').html(topfive);
 									}
 									
@@ -486,8 +482,6 @@
 									for (var i = 0; i < time.length; i++){
 										topfive = '<h1 style="font-size:30px">' + (i+1) + ' Distance ' + dis_arraytop[i] + ' m' + ' Time ' + lap_arraytop[i] +'</h1>' + topfive ;
 							
-										//document.write(arr_dis[i]+"<br>");
-										//document.write(arr_time[i] + "<br>");
 										$('#topbest5').html(topfive);
 									}
 							});	
