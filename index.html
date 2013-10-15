@@ -10,23 +10,30 @@
 			<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
 			<link href="./css/bootstrap.css" rel="stylesheet">
 			<link href="./css/bootstrap-responsive.css" rel="stylesheet">
+			<link href="./css/butoncss.css" rel="stylesheet">
 			<link rel="stylesheet" href="./css/app.css">	
 			<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 			<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
-			
+
 	</head>
-	
-	<body style="overflow:hidden">
+
+	<body background="BG.jpg" style="overflow:hidden">
 
 		<div data-role="page" id="running">
+		<style type="text/css">
+						#running {
+									background-image:url('BG.jpg');
+								 }
+   				
+		</style>
 					<div data-role="header">
 						<h1>Exercise Healthy</h1>
 					</div>					
 						<script type="text/javascript" charset="utf-8" src="cordova-2.5.0.js"></script>
 						<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
-						
-						<table border="1" cellspacing="0" cellpadding="0" align="CENTER"  >
-					
+
+						<table border="0" cellspacing="0" cellpadding="0" align="CENTER"  >
+
 							<tr>
 								<td colspan="2" width="330" height="350">
 								<br>
@@ -35,21 +42,20 @@
 								</td>
 							</tr>						
 							<tr id="tr">
-								<td width="25px" height="5px" align="CENTER">
-									Distance<h1 id="distance" style="font-size:20px;">0 m</h1>
-									
+								<td width="25px" height="5px" align="CENTER" color="white">
+									<h1 style="font-size:20px; color:white;"> Distance</h1> <h1 id="distance" style="font-size:20px; color:white;"> 0 m</h1>
+
 								</td>
-								<td width="25px" height="5px" align="CENTER">
-									Time<h1 id="timer" style="font-size:20px;">00:00:00</h1>
+								<td width="25px" height="5px" align="CENTER" color="white">
+									<h1 style="font-size:20px; color:white;">Time</h1> <h1 id="timer" style="font-size:20px; color:white;">00:00:00</h1>
 								</td>
 							</tr>	
-						</table>
-						<br><br>						
+						</table>					
 						<center>
-							<button type="button" id="btn-start-pause" class="btn btn-large btn-success" style="width:50%;height:50px;">Start</button>
-							<button type="button" id="btn-stop" class="btn btn-large btn-danger " style="width:50%;height:50px;">Stop</button>
+							<button type="button" id="btn-start-pause" class="buttonstart" style="color:#139D1A;">Start</button>
+							<button type="button" id="btn-stop" class="buttonstop" style="color:#F92436" >Stop</button>
 						</center>
-										
+
 						<script src="./js/bootstrap.js"></script>		
 						<script language="javascript">
 						var timeuse = 0;
@@ -101,7 +107,7 @@
 							localStorage.setItem('timer_current',timeinterval);
 							localStorage.setItem('timer_history',JSON.stringify(lap_array));
 							localStorage.setItem('timer_historytop',JSON.stringify(lap_arraytop));
-							
+
 
 							if(timeuse == 1)
 							{
@@ -139,14 +145,14 @@
 								setTimeout('Timeall()', 100);
 							}
 						}
-						
+
 						function Distancetotal()
 						{
 							distancetotal_x = distancetotal_x + distance_log;
 							$('#distancetotal_block3').html(distancetotal_x + ' m');
 							localStorage.setItem('distance_total',distancetotal_x);						
 						}
-						
+
 						function best(){
 
 						for(var i=0;i<dis_arraytop.length;i++){
@@ -155,33 +161,46 @@
 									tmp = dis_arraytop[j];
 									dis_arraytop[j] = dis_arraytop[j-1];
 									dis_arraytop[j-1] = tmp;
-									
+
 									tmp1 = lap_arraytop[j];
 									lap_arraytop[j] = lap_arraytop[j-1];
 									lap_arraytop[j-1] = tmp1;
-									
-									
+
+
 								}
 								if(dis_arraytop[j-1] == dis_arraytop[j] && lap_arraytop[j-1] > lap_arraytop[j]){
 									tmp = dis_arraytop[j];
 									dis_arraytop[j] = dis_arraytop[j-1];
 									dis_arraytop[j-1] = tmp;
-									
+
 									tmp1 = lap_arraytop[j];
 									lap_arraytop[j] = lap_arraytop[j-1];
-									lap_arraytop[j-1] = tmp1;
-									}
+									lap_arraytop[j-1] = tmp1;	
+								}
+									
 							}
-							
-						}
-	
-						}
-				
 						
+
+							/*var topfive = "";
+									for (var i = 0; i < time.length; i++){
+										topfive = '<h1 style="font-size:30px">' + (i+1) + ' Distance ' + dis_arraytop[i] + ' m' + ' Time ' + lap_arraytop[i] +'</h1>' + topfive ;
+
+										$('#topbest5').html(topfive);
+									}*/
+						}
+							var topfive = "";
+									for (var i = 0; i < time.length; i++){
+										topfive = '<h1 style="font-size:30px">' + (i+1) + ' Distance ' + dis_arraytop[i] + ' m' + ' Time ' + lap_arraytop[i] +'</h1>' + topfive ;
+
+										$('#topbest5').html(topfive);
+									}
+						}
+
+
 	//----------map----------------				
 //$('#btn-start-pause').on('click',function() {
 						function Map(){
-							
+
 
 							var distanceElement = document.getElementById('distance');
 							var map1 = document.getElementById('map1');
@@ -191,7 +210,7 @@
 							var lastDistanceTimeTemp = 0;
 
 							// setup two images that can fade from one to the other when new maps are loaded
-						   
+
 								map1.addEventListener('load', function () {
 								map1.style.opacity = 1;
 								map1.style.transitionDelay = 0;
@@ -201,7 +220,7 @@
 								visibleMap = map1;
 								hiddenMap = map2;
 								});
-								
+
 								map2.addEventListener('load', function () {
 								map2.style.opacity = 1;
 								map2.style.transitionDelay = 0;
@@ -217,13 +236,13 @@
 									alert("Geolocation is not supported by your browser");
 									return;
 								}
-									
+
 									navigator.geolocation.watchPosition(update, locationError, {
 									enableHighAccuracy: true,
 									timeout: Infinity,
 									maximumAge: 5000 //10000
 								});
-							
+
 							function update(position) {
 								if (latestPosition &&
 									position.coords.latitude === latestPosition.coords.latitude &&
@@ -233,7 +252,7 @@
 								/// try if (end ==0) long sai doo
 								latestPosition = position;
 								path.push(latestPosition.coords);
-								
+
 								if(end == 0){
 									Globals.cntUpdates++;
 								}
@@ -256,11 +275,11 @@
 								}
 								//localStorage.setItem('distance_current',distance_log);
 								//localStorage.setItem('distance_history',JSON.stringify(dis_array));
-								
-								
+
+
 								distanceElement.innerHTML = " " + totalDistanceString;
-								
-								
+
+
 								// find screen size (show biggest possible map for device)
 							var screenSize = 300 + "x" + 300;
 
@@ -268,22 +287,22 @@
 								src = "http://maps.googleapis.com/maps/api/staticmap?size=" + screenSize + "&sensor=true&path=";
 
 								// add path to map
-								
+
 									for (var i = 0; i < Globals.cntUpdates; i++) {
 										if (i !== 0) src += "|";
 										src += path[i].latitude + "," + path[i].longitude;
 									}
-									
+
 								// put marker at start and end of route
 								src += "&markers=" + path[0].latitude + "," + path[0].longitude + "|" +
 									path[path.length - 1].latitude + "," + path[path.length - 1].longitude;
 
 								// key
 								src += "&key=AIzaSyBV0yKqrMLMHwfmqEbKVR0xj7qreibCc2M";
-								
+
 								// load map, when loaded it will fade in
 								hiddenMap.src = src;
-								
+
 							}
 
 							// handle geolocation errors
@@ -313,7 +332,7 @@
 
 								return d;
 							}
-							
+
 						}
 //});
 
@@ -323,13 +342,13 @@
 							var status = 0;
 							var btntoggle = 0;
 							var btntoggles  =0;
-											
+
 							if(localStorage.getItem('timer_history') && localStorage.getItem('timer_current') && localStorage.getItem('timer_historytop')){
 								lap_array = JSON.parse(localStorage.getItem('timer_history'));
 								lap_arraytop = JSON.parse(localStorage.getItem('timer_historytop'));
 								timeinterval = parseInt(localStorage.getItem('timer_current'));
 							}
-							
+
 							//if(localStorage.getItem('distance_history') && localStorage.getItem('distance_current')){
 							if(localStorage.getItem('distance_history'))
 							{
@@ -337,17 +356,17 @@
 								//dis_arraytop = JSON.parse(localStorage.getItem('distance_top'));
 								//distance_log = parseInt(localStorage.getItem('distance_current'));
 							}
-							
+
 							if(localStorage.getItem('distance_top'))
 							{
 								dis_arraytop = JSON.parse(localStorage.getItem('distance_top'));
 							}
-							
+
 							if(localStorage.getItem('distance_total'))
 							{
 								distancetotal_x = parseInt(localStorage.getItem('distance_total'));
 							}
-							
+
 							if(localStorage.getItem('time_all'))
 							{
 									timeall = parseInt(localStorage.getItem('time_all'));
@@ -358,30 +377,30 @@
 								{
 									buildstring =  '<h1 style="font-size:30px">' + (i+1) + ' Time ' + lap_array[i] + ' Distance ' + dis_array[i] + ' m' +'</h1>' + buildstring ;		
 								}
-				
-							best();
-							var topfive = "";
+								
+							best();	
+							/*var topfive = "";
 									for (var i = 0; i < time.length; i++){
 										topfive = '<h1 style="font-size:30px">' + (i+1) + ' Distance ' + dis_arraytop[i] + ' m' + ' Time ' + lap_arraytop[i] +'</h1>' + topfive ;
 
 										$('#topbest5').html(topfive);
 									}
-							
-							
+							*/
+
 							$('#distancetotal_block3').html(distancetotal_x + ' m');							
 							$('#timeall').html(millisectime(timeall));
 							$('#distance').html(distance_log + ' m');
 							$('#mytime2').html(buildstring);
 							$('#timer').html(millisectotime(timeinterval));
-							
+
 							$('#btn-reset-timeall').on('click',function(){
 								timeall = 0;
 							});
-							
+
 							$('#btn-reset-distance').on('click',function(){
 								distancetotal_x = 0;
 							});
-							
+
 							$('#btn-delall').on('click',function(){
 								localStorage.removeItem('timer_current');
 								localStorage.removeItem('timer_history');
@@ -393,27 +412,27 @@
 									dis_array.length = 0;
 									lap_arraytop.length = 0;
 									dis_arraytop.length = 0;
-									
+
 							});
-	
+
 
 							$('#btn-start-pause').on('click',function(){
-								if (btntoggle == 0)
+								/*if (btntoggle == 0)
 								{
 									$('#btn-start-pause').removeClass("btn-success");
 									$('#btn-start-pause').addClass("btn-inverse");
 									$('#btn-start-pause').html('Pause');
-									
-									
+								*/
+
 									Map();
 									timeuse = 1;
 									TimerOK();
 									btntoggle = 1;
 									end = 0;
-									
-								
-								}
-								else
+
+
+								/*}
+								/else
 								{
 									$('#btn-start-pause').removeClass("btn-inverse");
 									$('#btn-start-pause').addClass("btn-success");
@@ -421,18 +440,19 @@
 									timeuse = 0;
 									btntoggle =0;
 								}
+								*/
 							});	
-									
-									
+
+
 							$('#btn-stop').on('click',function(){	
 
-									$('#btn-start-pause').removeClass("btn-inverse");
-									$('#btn-start-pause').addClass("btn-success");
-									$('#btn-start-pause').html('Start');
+									//$('#btn-start-pause').removeClass("btn-inverse");
+									//$('#btn-start-pause').addClass("btn-success");
+									//$('#btn-start-pause').html('Start');
 									$('#distance').html('0 m');
-									
+
 									Timeall();
-								
+
 									Distancetotal();									
 									timealluse = 1;
 									timeuse = 0;
@@ -444,7 +464,7 @@
 									lap_arraytop.push(millisectotime(timeinterval));
 									localStorage.setItem('distance_history',JSON.stringify(dis_array));
 									localStorage.setItem('distance_top',JSON.stringify(dis_arraytop));
-											
+
 									var buildstring = "";
 										for(var i = 0; i < lap_array.length;i++)
 										{
@@ -452,16 +472,16 @@
 										}
 
 									$('#mytime2').html(buildstring);
-									
+/*
 									var topfive = "";
 									for (var i = 0; i < time.length; i++){
 										topfive = '<h1 style="font-size:30px">' + (i+1) + ' Distance ' + dis_arraytop[i] + ' m' + ' Time ' + lap_array[i] +'</h1>' + topfive ;
 										$('#topbest5').html(topfive);
-									}
-									
+									*/
+
 									ResetTime();
-									
-									
+
+
 									//////////////////////
 									path = [];
 									Globals.cntUpdates = 0;
@@ -470,10 +490,10 @@
 									src = null;
 									visibleMap = null;
 									hiddenMap = null;
-								
+
 									///////////////////////
-									
-								
+									best();
+
 							});	
 							
 							$('#btn-update').on('click',function(){	
@@ -481,11 +501,11 @@
 									var topfive = "";
 									for (var i = 0; i < time.length; i++){
 										topfive = '<h1 style="font-size:30px">' + (i+1) + ' Distance ' + dis_arraytop[i] + ' m' + ' Time ' + lap_arraytop[i] +'</h1>' + topfive ;
-							
+
 										$('#topbest5').html(topfive);
 									}
 							});	
-
+						
 						});
 
 </script>	
@@ -541,7 +561,7 @@
 					<div data-role="header">
 						<h1>History</h1>
 					</div>
-					<style>
+					<!--<style>
 						.block {
 								display: block;
 								margin: 0 0 10px;
@@ -555,14 +575,14 @@
 								-moz-border-radius: 4px;
 								border-radius: 4px;
 								}
-					</style>
-					
-					<div id="mytimeblock1" class="block" style="height:100%">
+					</style>-->
+
+					<div id="mytimeblock1">
 						<center id="mytime2">
-						
+
 						</center>
 						<button type="button" id="btn-delall" class="btn-danger" style="width:100%;height:60px;margin:140% 0% 0% 0%">DELETE ALL DATA</button>
-	
+
 					<div data-role="footer" data-position="fixed" class="nav-glyphish-example">
 						<div data-role="navbar" class="nav-glyphish-example" data-grid="c">
 							<ul>
@@ -575,12 +595,12 @@
 					</div>
 					</div>
 		</div>
-		
+
 		<div data-role="page" id="total">
 					<div data-role="header">
 						<h1>Exercise Healthy</h1>
 					</div>
-					<style>
+					<!--<style>
 						.block {
 								display: block;
 								margin: 0 0 10px;
@@ -594,18 +614,18 @@
 								-moz-border-radius: 4px;
 								border-radius: 4px;
 								}
-					</style>
-					
-					<div id="mytimeblock2" class="block" style="height:100%">
+					</style>-->
+
+					<div id="mytimeblock2" >
 					<br><br><br>
 						<h1><center>Total Time</center></h1>
 						<h1><center id="timeall"></h1>
-						
+
 						</center>
 					<br><br>
 						<h1><center>Total Distance</center></h1>						
 						<h1><center id="distancetotal_block3"></h1>
-						
+
 						</center>						
 						<button type="button" id="btn-reset-timeall" class="btn-danger" style="width:50%;height:60px;margin:140% 0% 0% 0%">Reset</button>
 					<div data-role="footer" data-position="fixed" class="nav-glyphish-example">
@@ -620,12 +640,12 @@
 					</div>	
 					</div>
 		</div>			
-		
+
 		<div data-role="page" id="top5">
 					<div data-role="header">
 						<h1>Exercise Healthy</h1>
 					</div>
-					<style>
+					<!--<style>
 						.block {
 								display: block;
 								margin: 0 0 10px;
@@ -639,15 +659,15 @@
 								-moz-border-radius: 4px;
 								border-radius: 4px;
 								}
-					</style>
-					
-					<div id="mytimeblock4" class="block" style="height:100%">
+					</style>-->
+
+					<div id="mytimeblock4" >
 						<h1><center>Top 5</center></h1>
 						<h1><center id="topbest5"></center></h1>
 						<h1><center id="t"></center></h1>
-						<center>
-						<button type="button" id="btn-update" class="btn btn-large btn-success" style="width:50%;height:50px;">Update</button>
-						</center>
+						<br><br>
+						<center><button type="button" id="btn-update" class="buttonupdate" style="color:#2E57C6" >Up</button></div>
+						
 					<div data-role="footer" data-position="fixed" class="nav-glyphish-example">
 						<div data-role="navbar" class="nav-glyphish-example" data-grid="c">
 							<ul>
@@ -660,6 +680,6 @@
 					</div>	
 					</div>
 		</div>
-		
+
 	</body>
 </html>
